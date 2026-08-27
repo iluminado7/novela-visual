@@ -1,0 +1,15 @@
+# Capas originales de los sprites (Body / Clothes / Faces, PNG de 2160x3840).
+# El juego NO las usa: usa los sprites ya armados de personajes/aiko/.
+# Las dejamos fuera del repositorio por dos razones:
+#   - pesan casi 4 MB y no le sirven a nadie que solo quiera jugar
+#   - incluyen capas de cuerpo base que no queres publicar
+# Guardalas aparte en tu maquina. Si algun dia las necesitas para correr
+# herramientas/armar_sprites.py, copialas de vuelta a estas carpetas.
+assets/img/personajes/Idle/
+assets/img/personajes/Thinking/
+assets/img/personajes/Angry/
+
+# Basura de sistema
+Thumbs.db
+desktop.ini
+.DS_Store
