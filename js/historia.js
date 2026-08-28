@@ -44,7 +44,7 @@ const PERSONAJES = {
     carpeta: "assets/img/personajes/alvaro/",
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
-    chibi: "assets/img/personajes/chibis/alvaro-chibbi-saltando.png",
+    chibi: "assets/img/personajes/chibis/alvaro.png",
     chibiSalto: "assets/img/personajes/chibis/alvaro-chibbi-saltando.png",
     perfil: "El que habla más fuerte y decide a dónde van todos. " +
             "",
