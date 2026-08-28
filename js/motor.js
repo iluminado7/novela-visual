@@ -97,10 +97,14 @@ function intentarSonar(){
       esperandoGesto = false;
       document.removeEventListener("pointerdown", reintentar);
       document.removeEventListener("keydown", reintentar);
-      if (estado.audioOn) audio.play().catch(() => {});
+      document.removeEventListener("touchend", reintentar);
+      // Volvemos a pasar por aca: si el navegador lo rechaza de nuevo,
+      // queda esperando el toque siguiente en vez de rendirse.
+      intentarSonar();
     };
     document.addEventListener("pointerdown", reintentar);
     document.addEventListener("keydown", reintentar);
+    document.addEventListener("touchend", reintentar);
   });
 }
 
