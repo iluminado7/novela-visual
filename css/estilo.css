@@ -380,6 +380,16 @@ html, body{
   background: rgba(0,0,0,.3);
   flex: none;
 }
+/* Los chibis son figuras enteras y chiquitas: hay que verlos completos, no
+   recortados como los retratos de cuerpo entero. */
+.ficha img.chibi{
+  object-fit: contain;
+  object-position: bottom center;
+  background: transparent;
+  width: clamp(52px, 10vw, 76px);
+  image-rendering: auto;
+}
+
 .ficha .sin-foto{
   display:flex; align-items:center; justify-content:center;
   font-size: clamp(22px, 4vw, 30px);

@@ -41,26 +41,56 @@ const PERSONAJES = {
   /* --- El grupo del fondo del aula --- */
   alvaro: {
     nombre: "Álvaro", color: "#8fd6ff", oculto: true,
+    carpeta: "assets/img/personajes/alvaro/",
+    poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/alvaro.png",
     perfil: "El que habla más fuerte y decide a dónde van todos. " +
-            "Cae bien sin esforzarse, cosa que da un poco de bronca.",
+            "",
   },
   pato: {
     nombre: "Pato", color: "#c9b6ff", oculto: true,
+    carpeta: "assets/img/personajes/pato/",
+    poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/pato.png",
     perfil: "Habla poco y cuando habla es para bajar a alguien un " +
-            "renglón. No lo hace en serio. Casi nunca.",
+            "renglón. No lo hace en serio.",
   },
   mauri: {
     nombre: "Mauri", color: "#ffd08a", oculto: true,
-    perfil: "Bardero profesional. Tiene un chiste para todo, incluso " +
-            "cuando nadie se lo pidió. Sobre todo cuando nadie se lo pidió.",
+    carpeta: "assets/img/personajes/mauri/",
+    poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/mauri.png",
+    perfil: "Persona tranquila. Muy responsable y servicial. " +
+            ".",
   },
   lucas: {
     nombre: "Lucas", color: "#8fe3b0", oculto: true,
+    carpeta: "assets/img/personajes/lucas/",
+    poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/lucas.png",
     perfil: "Siempre parece recién despertado. Se queda hasta las cuatro " +
             "de la mañana jugando y llega igual que vos: justo.",
   },
+  iara: {
+    nombre: "Iara", color: "#7fc9a8", oculto: true,
+    carpeta: "assets/img/personajes/iara/",
+    poses: ["normal", "pensando", "enojada", "triste", "orgullosa"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/iara.png",
+    // Todavía no aparece en el guion: escribile el perfil cuando la sumes.
+    perfil: "Anteojos, pelo largo, campera del instituto. Aparece en el Acto 2.",
+  },
+
   franco: {
     nombre: "Franco", color: "#ffa8a8", oculto: true,
+    carpeta: "assets/img/personajes/franco/",
+    poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
+    retrato: "normal",
+    chibi: "assets/img/personajes/chibis/franco.png",
     perfil: "Sabe de todo un poco y le gusta que se note, pero cuando " +
             "hay que entregar algo es el único que lo tiene hecho.",
   },
@@ -78,7 +108,10 @@ const PERSONAJES = {
 const FONDOS = {
   // El amanecer es un cielo: recortarlo no se nota y queda mejor a pantalla llena.
   amanecer:    { src: "assets/img/amanecer.jpeg", ajuste: "cover" },
+  "camino-al-subte": "assets/img/camino-al-subte.jpeg",
+  "cartel-subte":    "assets/img/cartel-subte.jpg",
   subte:       "assets/img/subte.jpeg",
+  "vagon-subte":     "assets/img/vagon-subte.jpg",
   entrada:     "assets/img/entrada.jpg",
   patio:       "assets/img/patio.jpg",
   aula:        "assets/img/aula.jpeg",
@@ -137,6 +170,7 @@ const HISTORIA = {
 
     { texto: "Salí cuando el cielo todavía no había decidido de qué color quería ser." },
     { texto: "Naranja arriba, azul abajo, y esa franja del medio que no tiene nombre." },
+    { fondo: "camino-al-subte" },
     { texto: "Once minutos hasta la estación. Los conté una vez, hace como un año, y desde entonces no puedo dejar de contarlos." },
     { esperar: 400 },
 
@@ -146,6 +180,7 @@ const HISTORIA = {
     { texto: "Lo dije en voz alta. A nadie. Eso también lo hago todos los días." },
     { esperar: 500 },
 
+    { fondo: "cartel-subte" },
     { texto: "Bajé las escaleras de la estación con la tarjeta ya en la mano y la cabeza en cualquier lado." },
     { ir: "subte" },
   ],
@@ -166,8 +201,12 @@ const HISTORIA = {
     { texto: "Estaba mirando las vías con un dedo apoyado en la mejilla, como quien está resolviendo algo importante." },
     { texto: "La conozco de vista. Aiko. Va a mi mismo curso y nunca cruzamos una palabra." },
     { esperar: 400 },
+     { aiko: null },
+    { fondo: "cartel-subte" },
+    { texto: "El cartel decía que el tren llegaba en tres minutos." },
 
-    { texto: "El cartel decía que el tren llegaba en cuatro minutos." },
+    { fondo: "subte" },
+    { aiko: "pensando-feliz", donde: "centro" },
     { texto: "Cuatro minutos para decidir." },
 
     {
@@ -217,6 +256,7 @@ const HISTORIA = {
     { esperar: 600 },
 
     { texto: "Entró el tren. Ese golpe de aire que te despeina y el chirrido que te obliga a callarte tres segundos." },
+    { fondo: "vagon-subte" },
     { texto: "Subimos. El vagón estaba casi vacío, así que nos sentamos en el fondo a la derecha." },
     { texto: "En mi asiento. Bueno, en los dos asientos." },
     { esperar: 500 },
@@ -275,6 +315,7 @@ const HISTORIA = {
     { texto: "No dijo nada. Levantó un poco la mano, a la altura del pecho, y la volvió a bajar." },
     { esperar: 700 },
     { aiko: null },
+    { fondo: "cartel-subte" },
     { texto: "Miré el cartel. Dos minutos." },
     { esperar: 500 },
 
@@ -287,6 +328,7 @@ const HISTORIA = {
     { texto: "A nadie. Como todos los días." },
     { esperar: 600 },
 
+    { fondo: "vagon-subte" },
     { texto: "Entró el tren. Subí al vagón de adelante, que es el que nunca uso." },
     { texto: "Me quedé parado al lado de la puerta aunque había treinta asientos vacíos." },
     { esperar: 500 },
@@ -419,53 +461,71 @@ const HISTORIA = {
     { quien: "aiko", texto: "Está en esta división desde primero y ustedes ni saben cómo se llama." },
     { esperar: 500 },
 
+    { alvaro: "normal", donde: "centro" },
     { quien: "alvaro", texto: "Que dices, {nombre}, el de la ventana." },
+    { aiko: null ,alvaro: "orgulloso" },
     { quien: "alvaro", texto: "Álvaro. Todo bien, chabón." },
     { texto: "Me dio la mano como si nos conociéramos de antes. No sé cómo hace eso." },
     { esperar: 400 },
 
+    { alvaro: null, pato: "normal", donde: "centro" },
     { quien: "pato", texto: "Que onda." },
     { quien: "pato", texto: "Sos el que se sienta atrás y no habla nunca." },
     { quien: "yo", texto: "Ese." },
+    { pato: "orgulloso" },
     { quien: "pato", texto: "Buen laburo. Yo lo intento y no me sale." },
     { texto: "Lo dijo sin mover un músculo de la cara. Me cayó bien al toque." },
     { esperar: 500 },
 
+    { pato: null, mauri: "normal", donde: "centro" },
     { quien: "mauri", texto: "*no mueve ni un musculo*" },
     { quien: "mauri", texto: "Soy Mauri, mucho gusto. Che, ¿te viste Blue Lock?" },
     { quien: "yo", texto: "Mi manga favorito.." },
+    { mauri: "orgulloso" },
     { quien: "mauri", texto: "*extiende la mano y la estrecha con la mia* Me caes bien.. " },
     { quien: "yo", texto: "No se como hice para caerle bien en menos de 3 dialogos" },
+    { mauri: "normal" },
     { quien: "mauri", texto: "..." },
     { esperar: 400 },
 
-    { aiko: "normal-feliz", donde: "izquierda" },
+    { mauri: null, lucas: "normal", donde: "centro" },
     { quien: "lucas", texto: "Soy Lucas." },
     { texto: "Levantó dos dedos sin despegar la cabeza del banco." },
     { quien: "lucas", texto: "¿Vos también te levantás temprano por gusto o porque no dormís?" },
     { quien: "yo", texto: "Un poco y un poco." },
+    { lucas: "pensando", donde: "izquierda" },
     { quien: "lucas", texto: "Ah, sos un sigma, igual que Franco." },
+    /* Los dos hablan entre ellos: Aiko sale para que entren los dos en pantalla. */
+    { franco: "orgulloso", donde: "centro" },
     { quien: "franco", texto: "Thats right my nigga (hablaba en ingles nada que ver)" },
+    { lucas: "triste" },
     {quien: "lucas", texto: "*me mira con una expresion de cansancio*"},
     { quien: "lucas", texto: "Dejalo, Franco es medio especial a veces..." },
     { esperar: 500 },
 
+    { lucas: null, franco: null },
     { aiko: "normal-feliz", donde: "izquierda" },
     { quien: "aiko", texto: "Tambien esta Iara, lastima que el creador de este juego no le alcanzo el presupuesto para agregarla como personaje." },
     { quien: "yo", texto: "(¿Aiko acaba de romper la 4ta pared?)" },
     { esperar: 500 },
 
+    { franco: "normal", donde: "derecha" },
     { quien: "franco", texto: "Banda" },
     { quien: "franco", texto: "¿Ustedes hicieron el trabajo práctico de computación?" },
     { quien: "yo", texto: "¿El de qué?" },
+    { franco: "orgulloso" },
     { quien: "franco", texto: "El que hay que entregar hoy. En parejas." },
     { esperar: 600 },
 
     { texto: "Silencio en el banco del fondo. Cinco caras dándose vuelta al mismo tiempo." },
+    { aiko: null, alvaro: "normal", donde: "centro" },
     { quien: "alvaro", texto: "¿Hoy?" },
     { quien: "franco", texto: "Hoy." },
+    { alvaro: "enojado" },
     { quien: "alvaro", texto: "Franco, sos un boton de mierda." },
+    { franco: "orgulloso" },
     { quien: "franco", texto: "Yo lo tengo hecho." },
+    { alvaro: null, pato: "normal", donde: "centro" },
     { quien: "pato", texto: "Peor todavía." },
     { esperar: 600 },
 
@@ -475,7 +535,7 @@ const HISTORIA = {
     { esperar: 500 },
 
     { texto: "Sonó el timbre de nuevo. Última hora antes del recreo largo: computación." },
-    { aiko: null },
+    { aiko: null, pato: null, franco: null },
     { ir: "computacion" },
   ],
 
@@ -488,7 +548,9 @@ const HISTORIA = {
 
     { texto: "Me senté en la última máquina de la fila del fondo. Costumbre." },
     { texto: "El profesor escribió tres palabras en el pizarrón y se fue a tomar un café." },
+    { alvaro: "orgulloso", donde: "izquierda" },
     { quien: "alvaro", texto: "Les dije que era hoy." },
+    { alvaro: null, mauri: "pensando", donde: "izquierda" },
     { quien: "mauri", texto: "Franco, ¿trajiste las formulas?" },
     { esperar: 500 },
 
@@ -499,7 +561,7 @@ const HISTORIA = {
     { texto: "Eso es lo que me digo, por lo menos." },
     { esperar: 700 },
 
-    { aiko: "normal-feliz", donde: "derecha" },
+    { mauri: null, aiko: "normal-feliz", donde: "derecha" },
     { texto: "Arrastró una silla desde dos máquinas más allá y la puso al lado de la mía." },
     { texto: "Sin preguntar. Sin fijarse si había otro lugar." },
     { quien: "aiko", texto: "Bueno. Vos y yo." },

@@ -88,6 +88,10 @@ for (const [alias, f] of Object.entries(FONDOS)) {
 }
 for (const [alias, ruta] of Object.entries(MUSICA))
   ok(existe(ruta), `MUSICA."${alias}" apunta a ${ruta}, que no existe`);
+for (const [clave, per] of Object.entries(PERSONAJES)) {
+  if (per.chibi)
+    ok(existe(per.chibi), `${clave}: el chibi ${per.chibi} no existe`);
+}
 for (const [clave, per] of Object.entries(PERSONAJES))
   (per.poses || []).forEach((pose) =>
     ok(existe(per.carpeta + pose + ".png"),

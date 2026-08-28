@@ -55,6 +55,11 @@ herramientas/probar_juego.js     juega la historia entera sin abrir el navegador
 
 ## Cómo escribir la historia
 
+> **Para escribir el guion, la guía completa está en [GUION.md](GUION.md):**
+> decisiones, caminos que se separan y se juntan, banderas, cambios de
+> escenario y de sprites, personajes nuevos y errores comunes.
+> Lo que sigue acá es el resumen.
+
 Todo pasa en `js/historia.js`. Una escena es una lista de pasos:
 
 ```js
@@ -185,6 +190,14 @@ En el menú hay un panel que arma las fichas solo, a partir de `PERSONAJES`.
 Un personaje aparece ahí si le ponés `perfil`. Si además le ponés
 `oculto: true`, su ficha queda tapada con un `???` hasta que habla por primera
 vez en la historia.
+
+La foto de la ficha sale, en este orden:
+
+1. `chibi`, si lo tiene: `chibi: "assets/img/personajes/chibis/mauri.png"`.
+   Se muestra entero, sin recortar. Sirve incluso para personajes que todavía
+   no tienen sprites de cuerpo entero.
+2. Si no, el sprite que diga `retrato` (o la primera pose), recortado de arriba.
+3. Si no tiene ninguno, un recuadro con la inicial.
 
 ### Revisar el guion antes de jugarlo
 

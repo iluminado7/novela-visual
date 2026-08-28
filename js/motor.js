@@ -523,9 +523,16 @@ function llenarPersonajes(){
     const ficha = document.createElement("div");
     ficha.className = "ficha" + (visible ? "" : " bloqueada");
 
-    if (visible && per.carpeta && per.poses && per.poses.length){
+    // La ficha muestra el chibi si lo tiene; si no, el sprite de cuerpo entero.
+    const retrato = per.chibi
+      || (per.carpeta && per.poses && per.poses.length
+            ? per.carpeta + (per.retrato || per.poses[0]) + ".png"
+            : null);
+
+    if (visible && retrato){
       const img = document.createElement("img");
-      img.src = per.carpeta + (per.retrato || per.poses[0]) + ".png";
+      img.src = retrato;
+      if (per.chibi) img.className = "chibi";
       img.alt = per.nombre;
       ficha.appendChild(img);
     } else {
@@ -641,6 +648,7 @@ Object.keys(FONDOS).forEach((alias) => {
 });
 Object.values(PERSONAJES).forEach((per) => {
   (per.poses || []).forEach((pose) => { const i = new Image(); i.src = per.carpeta + pose + ".png"; });
+  if (per.chibi) { const i = new Image(); i.src = per.chibi; }
 });
 
 // Evitar el zoom por doble toque en iOS.

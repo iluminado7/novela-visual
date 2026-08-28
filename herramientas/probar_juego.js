@@ -76,6 +76,10 @@ for (const id of ["fondoA", "fondoB"]) {
   }
 }
 
+// Boton falso con data-panel: el motor le engancha el click para abrir el panel.
+nodos.__btnPanel = crearNodo(null);
+nodos.__btnPanel.dataset.panel = "panelPersonajes";
+
 // innerHTML="" debe vaciar los hijos (el motor lo usa para redibujar sprites)
 for (const n of Object.values(nodos)) {
   Object.defineProperty(n, "innerHTML", {
@@ -88,7 +92,7 @@ global.document = {
   createElement: t => { const n = crearNodo(null); n.tagName = t.toUpperCase(); return n; },
   querySelector: sel => (document.querySelectorAll(sel)[0] || null),
   querySelectorAll: sel => {
-    if (sel.includes("[data-panel]")) return [];       // los botones se prueban a mano
+    if (sel.includes("[data-panel]")) return [nodos.__btnPanel];
     if (sel.includes(".volver"))      return [];
     if (sel.startsWith(".panel:not")) return paneles().filter(n => !n.classList.contains("oculto"));
     if (sel.startsWith(".panel"))     return paneles();
@@ -174,6 +178,7 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
   for (const [n, e] of [["Fede", 0], ["Ana Lucia", 1], ["", 0]]) {
     const r = await jugar(n, e);
     console.log(`     ${r.vistas.length} lineas`);
+    console.log(`     sprites: ${r.sprites.map(corto).sort().join(", ")}`);
     console.log(`     fondos:  ${r.fondos.map(corto).join(" -> ")}`);
     console.log(`     musica:  ${["menu: " + corto(r.musicaEnMenu || "-"), ...r.pistas.map(p => "juego: " + corto(p))].join(" -> ")}`);
 
@@ -237,10 +242,23 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
   for (const q of ["aiko","alvaro","pato","mauri","lucas","franco"])
     if (!conocidos.includes(q)) errores.push(`"${q}" no quedo desbloqueado en el panel Personajes`);
 
+  // Abrir el panel de personajes arma las fichas: revisamos que retrato usa cada una.
+  nodos.__btnPanel.click();   // el motor arma las fichas al abrir el panel
+  const fichas = nodos.listaPersonajes.hijos;
+  console.log(`  fichas armadas: ${fichas.length}`);
+  for (const f of fichas) {
+    const buscar = (n, tag) => n.hijos.reduce((r, h) =>
+      r || (h.tagName === tag ? h : buscar(h, tag)), null);
+    const img = buscar(f, "IMG");
+    const nombre = (buscar(f, "H4") || {}).textContent;
+    const src = img ? (img._src || img.src) : "(sin foto)";
+    console.log(`    ${String(nombre).padEnd(9)} ${img ? img.className.padEnd(6) : "      "} ${src}`);
+    if (img && !fs.existsSync(path.join(RAIZ, src)))
+      errores.push(`la ficha de ${nombre} apunta a ${src}, que no existe`);
+  }
+
   nodos.panelPersonajes.classList.add("oculto");
   // abrir el panel dispara el armado de las fichas
-  const fichas = (() => { nodos.listaPersonajes.hijos.length = 0; return nodos.listaPersonajes; })();
-  global.__abrir = true;
 
   nodos.ctrlVolumen.value = "20";
   (nodos.ctrlVolumen._ev.input || []).forEach(f => f({ target: { value: "20" } }));
