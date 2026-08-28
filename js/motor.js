@@ -15,14 +15,20 @@ const el = {
   opciones: $("opciones"),
   menu: $("menu"),
   pantallaNombre: $("nombreJugador"),
+  menuJuego: $("menuJuego"),
+  panelPartidas: $("panelPartidas"),
+  listaPartidas: $("listaPartidas"),
+  tituloPartidas: $("tituloPartidas"),
   menuFondo: $("menuFondo"),
   listaPersonajes: $("listaPersonajes"),
+  tiraChibis: $("tiraChibis"),
   campoNombre: $("campoNombre"),
   avanzar: $("avanzar"),
 };
 
 const ESPERA_AUTO = 1400;  // ms extra en modo auto
 const CLAVE_SAVE  = "novela-visual-save";
+const RANURAS     = 6;                      // cuantos puntos de guardado tiene el jugador
 const CLAVE_AJUSTES  = "novela-visual-ajustes";
 const CLAVE_CONOCIDOS = "novela-visual-conocidos";
 const NOMBRE_POR_DEFECTO = "Kaito";
@@ -382,6 +388,11 @@ function finalizar(){
 /* ---------------- Guardar / Cargar ---------------- */
 function instantanea(){
   return {
+    // Para mostrar la ranura sin tener que cargar la partida.
+    fecha: new Date().toISOString(),
+    escena_nombre: estado.escena,
+    linea: el.texto.textContent || "",
+
     escena: estado.escena, paso: estado.paso,
     fondo: estado.fondo, musica: estado.musica,
     nombreJugador: estado.nombreJugador,
@@ -390,24 +401,190 @@ function instantanea(){
   };
 }
 
-function guardar(){
+/* Cada ranura es una clave distinta. La "-auto" es el autoguardado. */
+function claveRanura(i){
+  return i === "auto" ? CLAVE_SAVE + "-auto" : CLAVE_SAVE + "-" + i;
+}
+
+function guardarEn(i){
   try{
-    localStorage.setItem(CLAVE_SAVE, JSON.stringify(instantanea()));
-    avisar("Partida guardada");
-  }catch(e){ avisar("No se pudo guardar"); }
+    localStorage.setItem(claveRanura(i), JSON.stringify(instantanea()));
+    avisar("Guardado en la ranura " + (i + 1));
+    actualizarContinuar();
+    return true;
+  }catch(e){
+    avisar("No se pudo guardar");
+    return false;
+  }
+}
+
+function borrarRanura(i){
+  try{ localStorage.removeItem(claveRanura(i)); }catch(e){}
+  actualizarContinuar();
+}
+
+function hayAlgunaPartida(){
+  if (leerSave(claveRanura("auto"))) return true;
+  for (let i = 0; i < RANURAS; i++) if (leerSave(claveRanura(i))) return true;
+  return false;
+}
+
+function actualizarContinuar(){
+  $("btnContinuar").disabled = !hayAlgunaPartida();
+}
+
+/* Fecha corta y legible: "14 mar, 19:32" */
+function fechaCorta(iso){
+  try{
+    const d = new Date(iso);
+    const meses = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+    const dosCifras = (x) => String(x).padStart(2, "0");
+    return `${d.getDate()} ${meses[d.getMonth()]}, ${dosCifras(d.getHours())}:${dosCifras(d.getMinutes())}`;
+  }catch(e){ return ""; }
 }
 
 function guardarAuto(){
-  try{ localStorage.setItem(CLAVE_SAVE + "-auto", JSON.stringify(instantanea())); }catch(e){}
+  try{ localStorage.setItem(claveRanura("auto"), JSON.stringify(instantanea())); }catch(e){}
 }
 
 function leerSave(clave){
   try{ return JSON.parse(localStorage.getItem(clave) || "null"); }catch(e){ return null; }
 }
 
+/* ---------------- Panel de partidas ---------------- */
+let modoPartidas = "cargar";   // "cargar" o "guardar"
+
+function abrirPartidas(modo){
+  modoPartidas = modo;
+  el.tituloPartidas.textContent = modo === "guardar" ? "Guardar partida" : "Cargar partida";
+  dibujarRanuras();
+  el.panelPartidas.classList.remove("oculto");
+}
+
+function cerrarPartidas(){
+  el.panelPartidas.classList.add("oculto");
+}
+
+function dibujarRanuras(){
+  el.listaPartidas.innerHTML = "";
+  const guardando = modoPartidas === "guardar";
+
+  // El autoguardado solo se puede cargar, nunca pisar a mano.
+  const lista = guardando ? [] : ["auto"];
+  for (let i = 0; i < RANURAS; i++) lista.push(i);
+
+  for (const i of lista){
+    const d = leerSave(claveRanura(i));
+    const auto = i === "auto";
+    const vacia = !d;
+
+    const b = document.createElement("button");
+    b.className = "ranura" + (vacia ? " vacia" : "");
+    // Una ranura vacia no se puede cargar, y el autoguardado no se puede pisar.
+    if (vacia && !guardando) b.disabled = true;
+
+    const foto = document.createElement("div");
+    foto.className = "ranura-foto";
+    const fondo = d && FONDOS[d.fondo];
+    if (fondo) foto.style.backgroundImage = 'url("' + (typeof fondo === "string" ? fondo : fondo.src) + '")';
+    else { foto.classList.add("sin"); foto.textContent = guardando ? "+" : "—"; }
+
+    const datos = document.createElement("div");
+    datos.className = "ranura-datos";
+
+    const titulo = document.createElement("div");
+    titulo.className = "ranura-titulo";
+    titulo.textContent = auto ? "Autoguardado" : "Ranura " + (i + 1);
+
+    const detalle = document.createElement("div");
+    detalle.className = "ranura-detalle";
+    detalle.textContent = vacia
+      ? (guardando ? "Vacía — tocá para guardar acá" : "Vacía")
+      : `${d.nombreJugador || ""} · ${d.escena_nombre || "?"} · ${fechaCorta(d.fecha)}`;
+
+    datos.appendChild(titulo);
+    datos.appendChild(detalle);
+
+    if (!vacia && d.linea){
+      const linea = document.createElement("div");
+      linea.className = "ranura-linea";
+      linea.textContent = d.linea;
+      datos.appendChild(linea);
+    }
+
+    b.appendChild(foto);
+    b.appendChild(datos);
+
+    // Pisar o borrar una partida pide un segundo toque, para no perderla sin querer.
+    const pedirConfirmacion = (texto, alConfirmar) => {
+      if (b.dataset.confirmando === "si"){
+        b.dataset.confirmando = "";
+        alConfirmar();
+        return;
+      }
+      el.listaPartidas.querySelectorAll(".ranura").forEach((o) => {
+        o.dataset.confirmando = ""; o.classList.remove("confirmando");
+      });
+      b.dataset.confirmando = "si";
+      b.classList.add("confirmando");
+      titulo.textContent = texto;
+      setTimeout(() => {
+        if (b.dataset.confirmando !== "si") return;
+        b.dataset.confirmando = "";
+        b.classList.remove("confirmando");
+        titulo.textContent = auto ? "Autoguardado" : "Ranura " + (i + 1);
+      }, 3000);
+    };
+
+    if (!vacia && !auto){
+      const equis = document.createElement("button");
+      equis.className = "ranura-borrar";
+      equis.textContent = "×";
+      equis.title = "Borrar";
+      equis.addEventListener("click", (e) => {
+        e.stopPropagation();
+        pedirConfirmacion("¿Borrar? Tocá de nuevo", () => {
+          borrarRanura(i);
+          dibujarRanuras();
+          avisar("Ranura " + (i + 1) + " borrada");
+        });
+      });
+      b.appendChild(equis);
+    }
+
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (guardando){
+        if (vacia){ guardarEn(i); cerrarPartidas(); }
+        else pedirConfirmacion("¿Pisar? Tocá de nuevo", () => {
+          guardarEn(i); cerrarPartidas();
+        });
+      } else {
+        cerrarPartidas();
+        cargarDe(i);
+      }
+    });
+
+    el.listaPartidas.appendChild(b);
+  }
+}
+
+$("cerrarPartidas").addEventListener("click", (e) => { e.stopPropagation(); cerrarPartidas(); });
+
+function cargarDe(i){
+  const d = leerSave(claveRanura(i));
+  if (!d || !HISTORIA[d.escena]){ avisar("Esa ranura está vacía"); return; }
+  aplicar(d);
+}
+
 function cargar(){
-  const d = leerSave(CLAVE_SAVE) || leerSave(CLAVE_SAVE + "-auto");
+  const d = leerSave(claveRanura("auto"));
   if (!d || !HISTORIA[d.escena]){ avisar("No hay partida guardada"); return; }
+  aplicar(d);
+}
+
+function aplicar(d){
+  cerrarMenuJuego();
   estado.terminado = false;
   estado.enOpciones = false;
   estado.escribiendo = false;
@@ -477,11 +654,12 @@ $("ctrlVelocidad").addEventListener("input", (e) => {
 
 $("btnBorrar").addEventListener("click", () => {
   try{
-    localStorage.removeItem(CLAVE_SAVE);
-    localStorage.removeItem(CLAVE_SAVE + "-auto");
+    localStorage.removeItem(claveRanura("auto"));
+    for (let i = 0; i < RANURAS; i++) localStorage.removeItem(claveRanura(i));
+    localStorage.removeItem(CLAVE_SAVE);          // la ranura unica de antes
     localStorage.removeItem(CLAVE_CONOCIDOS);
   }catch(e){}
-  $("btnContinuar").disabled = true;
+  actualizarContinuar();
   llenarPersonajes();
   avisar("Partida borrada");
 });
@@ -559,6 +737,119 @@ function llenarPersonajes(){
   }
 }
 
+/* ---------------- Menú de la partida ---------------- */
+/* El botón "Menú" de la barra abre las mismas opciones que el menú principal,
+   sin salir de la partida. */
+
+function abrirMenuJuego(){
+  // Si venía en AUTO o salteando, lo frenamos: si no, sigue avanzando de fondo.
+  ["auto", "saltar"].forEach((campo) => {
+    if (!estado[campo]) return;
+    estado[campo] = false;
+    $(campo === "auto" ? "btnAuto" : "btnSaltar").classList.remove("activo");
+  });
+  clearTimeout(temporizadorAuto);
+  el.menuJuego.classList.remove("oculto");
+}
+
+function cerrarMenuJuego(){
+  el.menuJuego.classList.add("oculto");
+  reiniciarConfirmacion($("btnAlMenu"), "Menú principal");
+}
+
+function menuJuegoAbierto(){
+  return !el.menuJuego.classList.contains("oculto");
+}
+
+/* Pide un segundo toque antes de hacer algo que no tiene vuelta atrás. */
+let temporizadorConfirmar = null;
+function reiniciarConfirmacion(boton, textoOriginal){
+  clearTimeout(temporizadorConfirmar);
+  boton.dataset.confirmando = "";
+  boton.classList.remove("confirmando");
+  boton.textContent = textoOriginal;
+}
+
+function conConfirmacion(boton, textoOriginal, textoAviso, alConfirmar){
+  if (boton.dataset.confirmando === "si"){
+    reiniciarConfirmacion(boton, textoOriginal);
+    alConfirmar();
+    return;
+  }
+  boton.dataset.confirmando = "si";
+  boton.classList.add("confirmando");
+  boton.textContent = textoAviso;
+  temporizadorConfirmar = setTimeout(() => reiniciarConfirmacion(boton, textoOriginal), 3500);
+}
+
+$("btnMenu").addEventListener("click", (e) => { e.stopPropagation(); abrirMenuJuego(); });
+$("btnSeguir").addEventListener("click", (e) => { e.stopPropagation(); cerrarMenuJuego(); });
+
+$("btnGuardarMenu").addEventListener("click", (e) => {
+  e.stopPropagation(); cerrarMenuJuego(); abrirPartidas("guardar");
+});
+$("btnCargarMenu").addEventListener("click", (e) => {
+  e.stopPropagation(); cerrarMenuJuego(); abrirPartidas("cargar");
+});
+
+$("btnAlMenu").addEventListener("click", (e) => {
+  e.stopPropagation();
+  conConfirmacion($("btnAlMenu"), "Menú principal", "Se pierde lo no guardado. Tocá de nuevo",
+                  () => location.reload());
+});
+
+/* Tocar el fondo oscuro cierra el menú. */
+el.menuJuego.addEventListener("click", (e) => {
+  if (e.target === el.menuJuego) cerrarMenuJuego();
+});
+
+/* ---------------- Chibis del menú principal ---------------- */
+/* Se arman solos con los personajes que tengan "chibi" en historia.js.
+   Al pasarles el mouse o tocarlos, cambian a la pose de salto y brincan. */
+
+const DURACION_SALTO = 450;   // ms; tiene que coincidir con la animación del CSS
+
+function armarTiraChibis(){
+  el.tiraChibis.innerHTML = "";
+
+  for (const [clave, per] of Object.entries(PERSONAJES)){
+    if (!per.chibi) continue;
+
+    const b = document.createElement("button");
+    b.className = "chibi-menu";
+    b.setAttribute("aria-label", per.nombre);
+    b.title = per.nombre;
+
+    const quieto = document.createElement("img");
+    quieto.className = "quieto";
+    quieto.src = per.chibi;
+    quieto.alt = per.nombre;
+    b.appendChild(quieto);
+
+    if (per.chibiSalto){
+      const salta = document.createElement("img");
+      salta.className = "salta";
+      salta.src = per.chibiSalto;
+      salta.alt = "";
+      b.appendChild(salta);
+
+      let temporizador = null;
+      const saltar = () => {
+        if (b.classList.contains("saltando")) return;   // que termine el que está en curso
+        b.classList.add("saltando");
+        clearTimeout(temporizador);
+        temporizador = setTimeout(() => b.classList.remove("saltando"), DURACION_SALTO);
+      };
+
+      // pointerenter cubre el mouse; pointerdown, el dedo y el clic.
+      b.addEventListener("pointerenter", saltar);
+      b.addEventListener("pointerdown", saltar);
+    }
+
+    el.tiraChibis.appendChild(b);
+  }
+}
+
 /* ---------------- Controles ---------------- */
 function alternar(btn, campo){
   estado[campo] = !estado[campo];
@@ -571,6 +862,7 @@ el.avanzar.addEventListener("click", siguiente);
 
 document.addEventListener("keydown", (e) => {
   if (document.activeElement === el.campoNombre) return;
+  if (menuJuegoAbierto() || document.querySelector(".panel:not(.oculto)")) return;
   if (el.menu.classList.contains("oculto") &&
       el.pantallaNombre.classList.contains("oculto") &&
       (e.code === "Space" || e.code === "Enter" || e.code === "ArrowRight")){
@@ -578,15 +870,18 @@ document.addEventListener("keydown", (e) => {
     siguiente();
   }
   if (e.code === "Escape"){
-    if (document.querySelector(".panel:not(.oculto)")) cerrarPaneles();
+    if (!el.panelPartidas.classList.contains("oculto")) cerrarPartidas();
+    else if (document.querySelector(".panel:not(.oculto)")) cerrarPaneles();
+    else if (menuJuegoAbierto()) cerrarMenuJuego();
+    else if (el.menu.classList.contains("oculto")) abrirMenuJuego();
     else if (document.fullscreenElement) document.exitFullscreen();
   }
 });
 
 $("btnAuto").addEventListener("click", (e) => { e.stopPropagation(); alternar($("btnAuto"), "auto"); });
 $("btnSaltar").addEventListener("click", (e) => { e.stopPropagation(); alternar($("btnSaltar"), "saltar"); });
-$("btnGuardar").addEventListener("click", (e) => { e.stopPropagation(); guardar(); });
-$("btnCargar").addEventListener("click",  (e) => { e.stopPropagation(); cargar(); });
+$("btnGuardar").addEventListener("click", (e) => { e.stopPropagation(); abrirPartidas("guardar"); });
+$("btnCargar").addEventListener("click",  (e) => { e.stopPropagation(); abrirPartidas("cargar"); });
 
 $("btnAudio").addEventListener("click", (e) => {
   e.stopPropagation();
@@ -606,6 +901,8 @@ $("btnPantalla").addEventListener("click", (e) => {
 
 $("btnEmpezar").addEventListener("click", () => {
   cerrarPaneles();
+  cerrarPartidas();
+  cerrarMenuJuego();
   el.menu.classList.add("oculto");
   el.pantallaNombre.classList.remove("oculto");
   // El foco automatico abre el teclado en el celular; en PC deja escribir directo.
@@ -628,12 +925,10 @@ el.campoNombre.addEventListener("keydown", (e) => {
   e.stopPropagation();   // que Espacio escriba, no que avance el dialogo
 });
 
-$("btnContinuar").addEventListener("click", cargar);
+$("btnContinuar").addEventListener("click", () => abrirPartidas("cargar"));
 
-// Deshabilitar "Continuar" si no hay ninguna partida guardada.
-if (!leerSave(CLAVE_SAVE) && !leerSave(CLAVE_SAVE + "-auto")){
-  $("btnContinuar").disabled = true;
-}
+// "Continuar" solo si hay algo guardado en alguna ranura.
+actualizarContinuar();
 
 // Arranque: ajustes guardados y musica de portada.
 cargarAjustes();
@@ -648,8 +943,11 @@ Object.keys(FONDOS).forEach((alias) => {
 });
 Object.values(PERSONAJES).forEach((per) => {
   (per.poses || []).forEach((pose) => { const i = new Image(); i.src = per.carpeta + pose + ".png"; });
-  if (per.chibi) { const i = new Image(); i.src = per.chibi; }
+  if (per.chibi)      { const i = new Image(); i.src = per.chibi; }
+  if (per.chibiSalto) { const i = new Image(); i.src = per.chibiSalto; }
 });
+
+armarTiraChibis();
 
 // Evitar el zoom por doble toque en iOS.
 let ultimoToque = 0;

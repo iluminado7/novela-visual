@@ -315,6 +315,74 @@ html, body{
   max-width: 34ch;
 }
 
+/* ---------- TIRA DE CHIBIS DEL MENU ---------- */
+#tiraChibis{
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(var(--safe-b) + clamp(4px, 1.4vw, 16px));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(2px, 1.2vw, 20px);
+  padding-inline: clamp(6px, 2vw, 24px);
+  pointer-events: none;   /* solo los chibis reciben el toque, no la franja */
+  z-index: 2;
+}
+
+.chibi-menu{
+  position: relative;
+  flex: 0 1 auto;
+  width: clamp(52px, 11vw, 130px);
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Las dos poses van apiladas: se cambia cual se ve, y como las dos ya estan
+   cargadas el cambio es instantaneo. */
+.chibi-menu img{
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.55));
+  transition: opacity .09s;
+}
+.chibi-menu .salta{ opacity: 0; }
+
+/* Al pasar el mouse o tocar: cambia a la pose de salto y pega el brinco. */
+.chibi-menu.saltando .quieto{ opacity: 0; }
+.chibi-menu.saltando .salta { opacity: 1; }
+.chibi-menu.saltando{ animation: brinco .45s ease-out; }
+
+@keyframes brinco{
+  0%   { transform: translateY(0)     scale(1); }
+  28%  { transform: translateY(-16%)  scale(1.06); }
+  55%  { transform: translateY(-4%)   scale(1); }
+  75%  { transform: translateY(-9%)   scale(1.02); }
+  100% { transform: translateY(0)     scale(1); }
+}
+
+/* En pantallas bajas la tira estorba: se achica bastante. */
+@media (max-height: 480px){
+  #tiraChibis{ gap: 2px; }
+  .chibi-menu{ width: clamp(38px, 7vw, 64px); }
+}
+
+/* Si el menu es angosto y encima vertical, la tira tapa los botones. */
+@media (max-width: 380px){
+  #tiraChibis{ display: none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .chibi-menu.saltando{ animation: none; }
+}
+
 /* ---------- PANELES DEL MENU ---------- */
 .panel{
   position:absolute; inset:0;
@@ -322,7 +390,9 @@ html, body{
   padding: calc(var(--pad) + var(--safe-t)) var(--pad) calc(var(--pad) + var(--safe-b));
   background: rgba(6,7,11,.72);
   backdrop-filter: blur(8px);
-  z-index: 5;
+  /* Se abren tanto desde el menu principal como desde adentro de la partida,
+     asi que van por encima de los dos. */
+  z-index: 55;
   animation: aparecePanel .25s ease;
 }
 .panel.oculto{ display:none; }
@@ -399,6 +469,165 @@ html, body{
 .ficha p{ font-size: clamp(13px, 1.9vw, 15px); opacity:.78; line-height:1.5; }
 .ficha.bloqueada h4{ color: rgba(238,241,248,.5) !important; }
 .ficha.bloqueada p{ opacity:.4; font-style: italic; }
+
+/* ---------- MENU DENTRO DE LA PARTIDA ---------- */
+#menuJuego{
+  position:absolute; inset:0;
+  z-index: 50;
+  background: rgba(6,7,11,.55);
+  backdrop-filter: blur(4px);
+  animation: aparecePanel .2s ease;
+}
+#menuJuego.oculto{ display:none; }
+
+/* Columna a la izquierda, como una solapa. El resto deja ver la escena. */
+#menuJuegoBarra{
+  position:absolute; inset:0 auto 0 0;
+  display:flex; flex-direction:column; justify-content:center;
+  gap: clamp(14px, 2.4vw, 22px);
+  width: min(330px, 78vw);
+  padding: calc(var(--pad) + var(--safe-t)) clamp(18px, 3vw, 32px)
+           calc(var(--pad) + var(--safe-b)) calc(clamp(18px, 3vw, 32px) + var(--safe-l));
+  background: linear-gradient(100deg, rgba(13,15,22,.97) 72%, rgba(13,15,22,.86) 100%);
+  border-right: 1px solid var(--caja-borde);
+  box-shadow: 14px 0 44px rgba(0,0,0,.45);
+  animation: entraSolapa .25s ease;
+}
+@keyframes entraSolapa{
+  from{ transform: translateX(-14px); opacity:.4; }
+  to  { transform: none; opacity:1; }
+}
+
+#menuJuegoBarra h2{
+  font-size: clamp(20px, 3.4vw, 27px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+#menuJuegoBarra h2::after{
+  content:"";
+  display:block;
+  width: 38px; height: 3px;
+  margin-top: .4em;
+  border-radius: 2px;
+  background: var(--acento);
+}
+
+#menuJuegoBotones{ display:flex; flex-direction:column; align-items:flex-start; gap: 2px; }
+
+.opcion-menu{
+  font: inherit;
+  font-size: clamp(15px, 2.3vw, 18px);
+  color: var(--papel);
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: .62em .8em;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  cursor: pointer;
+  transition: background .14s, color .14s, padding-left .14s;
+}
+.opcion-menu:hover{ background: rgba(255,255,255,.09); color: var(--acento); padding-left: 1.15em; }
+.opcion-menu:active{ background: rgba(255,255,255,.15); }
+.opcion-menu.peligro{ margin-top: clamp(10px, 1.8vw, 16px); opacity:.72; }
+.opcion-menu.peligro:hover{ background: rgba(255,120,140,.16); color: var(--acento); opacity:1; }
+.opcion-menu.confirmando{ background: rgba(255,120,140,.22); color: var(--acento); opacity:1; }
+
+/* Pantallas bajas (celular acostado): mas compacto para que entren todos. */
+@media (max-height: 480px){
+  #menuJuegoBarra{ gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+  #menuJuegoBarra h2{ font-size: 17px; }
+  #menuJuegoBarra h2::after{ display:none; }
+  .opcion-menu{ min-height: 34px; padding: .35em .7em; font-size: 14px; }
+  .opcion-menu.peligro{ margin-top: 6px; }
+}
+
+/* ---------- RANURAS DE GUARDADO ---------- */
+/* Este panel se usa tambien durante la partida, no solo desde el menu, asi
+   que va por encima de la caja de dialogo y de la barra de botones. */
+#panelPartidas{ z-index: 60; }
+
+.ranura{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: clamp(10px, 1.8vw, 16px);
+  align-items: center;
+  width: 100%;
+  padding: clamp(9px, 1.5vw, 13px);
+  font: inherit;
+  color: var(--papel);
+  text-align: left;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.ranura:hover{ background: rgba(255,255,255,.09); border-color: var(--acento); }
+.ranura:active{ transform: scale(.99); }
+.ranura.vacia{ opacity: .62; }
+.ranura.vacia:hover{ opacity: 1; }
+.ranura[disabled]{ opacity: .3; cursor: not-allowed; }
+.ranura[disabled]:hover{ background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09); }
+
+/* Miniatura del fondo en el que quedo la partida */
+.ranura-foto{
+  width: clamp(56px, 11vw, 82px);
+  height: clamp(38px, 7.4vw, 55px);
+  border-radius: 9px;
+  background: rgba(0,0,0,.35) center/cover;
+  flex: none;
+}
+.ranura-foto.sin{
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(15px, 2.6vw, 20px);
+  opacity: .4;
+}
+
+.ranura-datos{ min-width: 0; }
+.ranura-titulo{
+  font-size: clamp(14px, 2.1vw, 16px);
+  font-weight: 600;
+  margin-bottom: .2em;
+}
+.ranura-detalle{
+  font-size: clamp(12px, 1.8vw, 13px);
+  opacity: .6;
+  margin-bottom: .25em;
+}
+.ranura-linea{
+  font-size: clamp(12px, 1.8vw, 13.5px);
+  opacity: .8;
+  font-style: italic;
+  /* Una sola linea: el texto largo se corta con puntos suspensivos. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranura-borrar{
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--papel);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 9px;
+  width: 38px; height: 38px;
+  flex: none;
+  cursor: pointer;
+  opacity: .5;
+  transition: opacity .15s, background .15s, color .15s;
+}
+.ranura-borrar:hover{ opacity: 1; background: rgba(255,120,140,.2); border-color: var(--acento); }
+
+/* Paso intermedio: hay que tocar dos veces para pisar o borrar una partida */
+.ranura.confirmando{
+  border-color: var(--acento);
+  background: rgba(255,158,196,.14);
+}
+.ranura.confirmando .ranura-titulo{ color: var(--acento); }
 
 /* ---------- AJUSTES (sliders) ---------- */
 .ajuste{

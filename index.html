@@ -33,6 +33,7 @@
     <button class="btn-icono" id="btnCargar"  title="Cargar">Cargar</button>
     <button class="btn-icono" id="btnAudio"   title="Sonido">&#9835;</button>
     <button class="btn-icono" id="btnPantalla" title="Pantalla completa">&#9974;</button>
+    <button class="btn-icono" id="btnMenu" title="Men&uacute;">Men&uacute;</button>
   </div>
 
   <!-- Caja de dialogo -->
@@ -66,66 +67,94 @@
       <p class="pie">Toc&aacute; o hac&eacute; clic para avanzar &middot; Espacio / Enter tambi&eacute;n funcionan</p>
     </div>
 
+    <!-- Los chibis del elenco. Se arman solos desde PERSONAJES. -->
+    <div id="tiraChibis"></div>
+
+  </div>
+
+  <!-- ============ MENU DENTRO DE LA PARTIDA ============ -->
+  <div id="menuJuego" class="oculto">
+    <div id="menuJuegoBarra">
+      <h2>Men&uacute;</h2>
+      <nav id="menuJuegoBotones">
+        <button class="opcion-menu" id="btnSeguir">Seguir jugando</button>
+        <button class="opcion-menu" id="btnGuardarMenu">Guardar partida</button>
+        <button class="opcion-menu" id="btnCargarMenu">Cargar partida</button>
+        <button class="opcion-menu" data-panel="panelPersonajes">Personajes</button>
+        <button class="opcion-menu" data-panel="panelOpciones">Opciones</button>
+        <button class="opcion-menu" data-panel="panelAcerca">Acerca de</button>
+        <button class="opcion-menu peligro" id="btnAlMenu">Men&uacute; principal</button>
+      </nav>
+    </div>
+  </div>
+
     <!-- ---- Panel: Personajes ---- -->
-    <div class="panel oculto" id="panelPersonajes">
-      <div class="panel-caja">
-        <h2>Personajes</h2>
-        <div class="panel-cuerpo" id="listaPersonajes"></div>
-        <button class="btn-menu volver">Volver</button>
-      </div>
+  <div class="panel oculto" id="panelPersonajes">
+    <div class="panel-caja">
+      <h2>Personajes</h2>
+      <div class="panel-cuerpo" id="listaPersonajes"></div>
+      <button class="btn-menu volver">Volver</button>
     </div>
+  </div>
 
-    <!-- ---- Panel: Opciones ---- -->
-    <div class="panel oculto" id="panelOpciones">
-      <div class="panel-caja">
-        <h2>Opciones</h2>
-        <div class="panel-cuerpo">
+  <!-- ---- Panel: Opciones ---- -->
+  <div class="panel oculto" id="panelOpciones">
+    <div class="panel-caja">
+      <h2>Opciones</h2>
+      <div class="panel-cuerpo">
 
-          <label class="ajuste" for="ctrlVolumen">
-            <span class="ajuste-nombre">Volumen de la m&uacute;sica</span>
-            <span class="ajuste-valor" id="valVolumen">55%</span>
-            <input type="range" id="ctrlVolumen" min="0" max="100" step="5" value="55">
-          </label>
+        <label class="ajuste" for="ctrlVolumen">
+          <span class="ajuste-nombre">Volumen de la m&uacute;sica</span>
+          <span class="ajuste-valor" id="valVolumen">55%</span>
+          <input type="range" id="ctrlVolumen" min="0" max="100" step="5" value="55">
+        </label>
 
-          <label class="ajuste" for="ctrlVelocidad">
-            <span class="ajuste-nombre">Velocidad del texto</span>
-            <span class="ajuste-valor" id="valVelocidad">Normal</span>
-            <input type="range" id="ctrlVelocidad" min="0" max="4" step="1" value="2">
-          </label>
+        <label class="ajuste" for="ctrlVelocidad">
+          <span class="ajuste-nombre">Velocidad del texto</span>
+          <span class="ajuste-valor" id="valVelocidad">Normal</span>
+          <input type="range" id="ctrlVelocidad" min="0" max="4" step="1" value="2">
+        </label>
 
-          <button class="btn-secundario" id="btnBorrar">Borrar la partida guardada</button>
-          <p class="nota">Los ajustes y la partida se guardan en este navegador.</p>
+        <button class="btn-secundario" id="btnBorrar">Borrar la partida guardada</button>
+        <p class="nota">Los ajustes y la partida se guardan en este navegador.</p>
 
-        </div>
-        <button class="btn-menu volver">Volver</button>
       </div>
+      <button class="btn-menu volver">Volver</button>
     </div>
+  </div>
 
-    <!-- ---- Panel: Acerca de ---- -->
-    <div class="panel oculto" id="panelAcerca">
-      <div class="panel-caja">
-        <h2>Acerca de</h2>
-        <div class="panel-cuerpo">
-          <p>Todos los d&iacute;as hago el mismo recorrido y tardo once minutos.
-             Hoy, en el and&eacute;n, hab&iacute;a alguien.</p>
-          <p>Una novela visual corta. Lo que elijas cambia c&oacute;mo sigue.</p>
+  <!-- ---- Panel: Acerca de ---- -->
+  <div class="panel oculto" id="panelAcerca">
+    <div class="panel-caja">
+      <h2>Acerca de</h2>
+      <div class="panel-cuerpo">
+        <p>Todos los d&iacute;as hago el mismo recorrido y tardo once minutos.
+           Hoy, en el and&eacute;n, hab&iacute;a alguien.</p>
+        <p>Una novela visual corta. Lo que elijas cambia c&oacute;mo sigue.</p>
 
-          <h3>Controles</h3>
-          <ul>
-            <li><b>Toc&aacute; la pantalla</b> o <b>clic</b> para avanzar.</li>
-            <li>En la compu: <b>Espacio</b>, <b>Enter</b> o <b>&rarr;</b>.</li>
-            <li><b>AUTO</b> avanza solo. <b>&raquo;&raquo;</b> saltea r&aacute;pido.</li>
-            <li><b>Esc</b> sale de pantalla completa.</li>
-          </ul>
+        <h3>Controles</h3>
+        <ul>
+          <li><b>Toc&aacute; la pantalla</b> o <b>clic</b> para avanzar.</li>
+          <li>En la compu: <b>Espacio</b>, <b>Enter</b> o <b>&rarr;</b>.</li>
+          <li><b>AUTO</b> avanza solo. <b>&raquo;&raquo;</b> saltea r&aacute;pido.</li>
+          <li><b>Esc</b> sale de pantalla completa.</li>
+        </ul>
 
-          <h3>Cr&eacute;ditos</h3>
-          <ul>
-            <li>M&uacute;sica: OST de <i>Doki Doki Literature Club</i> (provisoria).</li>
-            <li>Hecho con HTML, CSS y JavaScript. Sin librer&iacute;as.</li>
-          </ul>
-        </div>
-        <button class="btn-menu volver">Volver</button>
+        <h3>Cr&eacute;ditos</h3>
+        <ul>
+          <li>M&uacute;sica: OST de <i>Doki Doki Literature Club</i> (provisoria).</li>
+          <li>Hecho con HTML, CSS y JavaScript. Sin librer&iacute;as.</li>
+        </ul>
       </div>
+      <button class="btn-menu volver">Volver</button>
+    </div>
+  </div>
+  <!-- ============ PARTIDAS GUARDADAS ============ -->
+  <div class="panel oculto" id="panelPartidas">
+    <div class="panel-caja">
+      <h2 id="tituloPartidas">Partidas</h2>
+      <div class="panel-cuerpo" id="listaPartidas"></div>
+      <button class="btn-menu volver" id="cerrarPartidas">Volver</button>
     </div>
   </div>
 

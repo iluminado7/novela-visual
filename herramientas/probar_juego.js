@@ -49,14 +49,21 @@ function crearNodo(id) {
     click: () => (n._ev.click || []).forEach(f => f({ stopPropagation() {}, preventDefault() {} })),
     appendChild: c => { n.hijos.push(c); return c; },
     remove: () => {},
-    querySelectorAll: () => n.hijos.filter(h => h.tagName === "IMG"),
+    querySelectorAll: (sel) => {
+      if (!sel || sel === "img") return n.hijos.filter(h => h.tagName === "IMG");
+      if (sel.startsWith(".")) return n.hijos.filter(h => h.classList.contains(sel.slice(1)));
+      return n.hijos.filter(h => h.tagName === sel.toUpperCase());
+    },
     querySelector: sel => n.hijos.find(h => h.classList.contains(sel.replace(".", ""))) || null,
     focus: () => { document.activeElement = n; },
     removeAttribute: () => {},
+    setAttribute: (k, v) => { n[k] = v; },
+    getAttribute: (k) => n[k],
   };
   return n;
 }
-const paneles = () => ["panelPersonajes","panelOpciones","panelAcerca"].map(i => nodos[i]);
+const paneles = () => ["panelPersonajes","panelOpciones","panelAcerca","panelPartidas"]
+  .map(i => nodos[i]);
 
 function montar(){
 nodos = {};
@@ -64,7 +71,10 @@ nodos = {};
  "nombreJugador","campoNombre","avanzar","juego","btnAuto","btnSaltar","btnGuardar",
  "btnCargar","btnAudio","btnPantalla","btnEmpezar","btnContinuar","btnConfirmarNombre",
  "menuFondo","listaPersonajes","ctrlVolumen","valVolumen","ctrlVelocidad","valVelocidad",
- "btnBorrar","panelPersonajes","panelOpciones","panelAcerca"]
+ "btnBorrar","panelPersonajes","panelOpciones","panelAcerca",
+ "panelPartidas","listaPartidas","tituloPartidas","cerrarPartidas",
+ "menuJuego","btnMenu","btnSeguir","btnGuardarMenu","btnCargarMenu","btnAlMenu",
+ "tiraChibis"]
   .forEach(id => nodos[id] = crearNodo(id));
 
 // Las capas de fondo llevan adentro .relleno (borroso) y .frente (la imagen).
@@ -75,6 +85,8 @@ for (const id of ["fondoA", "fondoB"]) {
     nodos[id].hijos.push(capa);
   }
 }
+
+nodos.menuJuego.classList.add("oculto");
 
 // Boton falso con data-panel: el motor le engancha el click para abrir el panel.
 nodos.__btnPanel = crearNodo(null);
@@ -129,7 +141,7 @@ const esperar = () => new Promise(r => _st(r, 30));
 
 async function jugar(nombreJugador, elegir) {
   montar();   // motor limpio para cada partida, como recargar la pagina
-  console.log(`\n=== Partida como "${nombreJugador}" (elige opcion #${elegir}) ===`);
+  console.log(`\n=== Partida como "${nombreJugador}" (elige ${JSON.stringify(elegir)}) ===`);
   const vistas = [], sprites = new Set(), fondos = [];
   pistas = [];
   const musicaEnMenu = nodos.__musicaMenu;
@@ -141,7 +153,7 @@ async function jugar(nombreJugador, elegir) {
   nodos.btnConfirmarNombre.click();
   await esperar();
 
-  let guardias = 0, ultimo = null;
+  let guardias = 0, ultimo = null, decisiones = 0;
   while (guardias++ < 600) {
     if (nodos.dialogo.classList.contains("oculto") === false && nodos.texto.textContent !== ultimo) {
       ultimo = nodos.texto.textContent;
@@ -157,8 +169,10 @@ async function jugar(nombreJugador, elegir) {
       const ops = nodos.opciones.hijos;
       const etiquetas = ops.map(o => o.textContent);
       if (etiquetas[0] === "Volver al menu") { console.log("  -> Fin alcanzado."); break; }
-      console.log(`  -> Opciones: ${etiquetas.join(" | ")}  => elijo "${etiquetas[Math.min(elegir, ops.length - 1)]}"`);
-      ops[Math.min(elegir, ops.length - 1)].click();
+      const cual = Math.min(Array.isArray(elegir) ? (elegir[decisiones++] ?? 0) : elegir,
+                            ops.length - 1);
+      console.log(`  -> Opciones: ${etiquetas.join(" | ")}  => elijo "${etiquetas[cual]}"`);
+      ops[cual].click();
       await esperar();
       continue;
     }
@@ -175,7 +189,9 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
 (async () => {
   const errores = [];
 
-  for (const [n, e] of [["Fede", 0], ["Ana Lucia", 1], ["", 0]]) {
+  // Las cuatro combinaciones de las dos decisiones, mas el nombre vacio.
+  for (const [n, e] of [["Fede", [0, 0]], ["Ana Lucia", [1, 1]],
+                        ["Rocio", [0, 1]], ["Tomi", [1, 0]], ["", [0, 0]]]) {
     const r = await jugar(n, e);
     console.log(`     ${r.vistas.length} lineas`);
     console.log(`     sprites: ${r.sprites.map(corto).sort().join(", ")}`);
@@ -216,21 +232,39 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
       if (!fs.existsSync(path.join(RAIZ, sp))) errores.push(`sprite inexistente: ${sp}`);
 
     // Las dos ramas tienen que dar textos distintos
-    if (e === 1 && texto.includes("Llegaste cinco minutos tarde"))
+    if (e[0] === 1 && texto.includes("Llegaste cinco minutos tarde"))
       errores.push("la rama 'seguir de largo' esta mostrando texto de la rama 'hablarle'");
-    if (e === 0 && texto.includes("era un saludo, boludo"))
+    if (e[0] === 0 && texto.includes("era un saludo, boludo"))
       errores.push("la rama 'hablarle' esta mostrando texto de la rama 'seguir de largo'");
 
-    nodos.btnGuardar.click();
+    // --- Menu de la partida ---
+    nodos.btnAuto.click();               // lo dejamos en AUTO a proposito
     await esperar();
-    const g = JSON.parse(almacen["novela-visual-save"] || "null");
+    nodos.btnMenu.click();
+    await esperar();
+    if (nodos.menuJuego.classList.contains("oculto"))
+      errores.push("el boton Menu no abrio el menu de la partida");
+    if (nodos.btnAuto.classList.contains("activo"))
+      errores.push("abrir el menu no freno el modo AUTO");
+    nodos.btnSeguir.click();
+    await esperar();
+    if (!nodos.menuJuego.classList.contains("oculto"))
+      errores.push("\"Seguir jugando\" no cerro el menu");
+
+    nodos.btnGuardar.click();            // abre el panel de ranuras
+    await esperar();
+    const ranuras = nodos.listaPartidas.hijos;
+    if (!ranuras.length) errores.push("el panel de guardado no mostro ninguna ranura");
+    ranuras[0].click();                  // guarda en la ranura 1
+    await esperar();
+    const g = JSON.parse(almacen["novela-visual-save-0"] || "null");
     if (!g) errores.push("btnGuardar no escribio nada");
     else {
       if (g.nombreJugador !== esperado) errores.push(`el guardado perdio el nombre (${g.nombreJugador})`);
-      if (e === 0 && !g.banderas.hablaste) errores.push("el guardado perdio la bandera 'hablaste'");
-      if (e === 1 && g.banderas.hablaste)  errores.push("la bandera 'hablaste' quedo puesta sin haber hablado");
+      if (e[0] === 0 && !g.banderas.hablaste) errores.push("el guardado perdio la bandera 'hablaste'");
+      if (e[0] === 1 && g.banderas.hablaste)  errores.push("la bandera 'hablaste' quedo puesta sin haber hablado");
     }
-    delete almacen["novela-visual-save"];
+    for (let i = 0; i < 6; i++) delete almacen["novela-visual-save-" + i];
     delete almacen["novela-visual-save-auto"];
   }
 
@@ -243,6 +277,20 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
     if (!conocidos.includes(q)) errores.push(`"${q}" no quedo desbloqueado en el panel Personajes`);
 
   // Abrir el panel de personajes arma las fichas: revisamos que retrato usa cada una.
+  // La tira de chibis del menu principal
+  const chibis = nodos.tiraChibis.hijos;
+  console.log(`  chibis en la portada: ${chibis.length}`);
+  for (const c of chibis) {
+    const imgs = c.hijos.filter(h => h.tagName === "IMG");
+    const salta = imgs.length > 1;
+    for (const im of imgs) {
+      const src = im._src || im.src;
+      if (!fs.existsSync(path.join(RAIZ, src)))
+        errores.push(`chibi inexistente en la portada: ${src}`);
+    }
+    console.log(`    ${String(c.title).padEnd(8)} ${salta ? "salta" : "SIN pose de salto"}`);
+  }
+
   nodos.__btnPanel.click();   // el motor arma las fichas al abrir el panel
   const fichas = nodos.listaPersonajes.hijos;
   console.log(`  fichas armadas: ${fichas.length}`);

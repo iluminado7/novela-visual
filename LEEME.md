@@ -184,6 +184,53 @@ parte de la foto que se prioriza al recortar (`top center`, `bottom left`, etc).
 
 El encuadre se recalcula al rotar el celular o cambiar el tamaño de la ventana.
 
+### Los chibis de la portada
+
+El menú principal muestra abajo una tira con el elenco. Al pasarles el mouse o
+tocarlos, cambian a la pose de salto y pegan el brinco.
+
+Se arma sola desde `PERSONAJES`, en `js/historia.js`:
+
+```js
+  mauri: {
+    chibi:      "assets/img/personajes/chibis/mauri.png",           // pose quieta
+    chibiSalto: "assets/img/personajes/chibis/mauri-saltando.png",  // pose de salto
+  },
+```
+
+Aparece en la tira todo el que tenga `chibi`. Si además tiene `chibiSalto`,
+salta; si no, se queda quieto. Las dos imágenes se precargan, así que el cambio
+es instantáneo.
+
+En pantallas muy angostas (menos de 380px) la tira se oculta, para no tapar los
+botones del menú.
+
+### Menú dentro de la partida
+
+El botón **Menú** de la barra de arriba abre, sin salir de la partida, las
+mismas opciones que el menú principal: guardar, cargar, personajes, opciones,
+acerca de, y volver al menú principal.
+
+- Abrirlo frena el modo AUTO y el salteo, para que no siga avanzando de fondo.
+- **Esc** lo abre y lo cierra. Tocar afuera de la solapa también lo cierra.
+- "Menú principal" pide un segundo toque, porque se pierde lo no guardado.
+
+### Puntos de guardado
+
+El jugador tiene **6 ranuras** más un **autoguardado** que se actualiza en cada
+línea de diálogo.
+
+- **Guardar** (barra de arriba) abre las ranuras para elegir dónde guardar.
+- **Cargar** (barra de arriba) y **Continuar** (menú) abren las ranuras para elegir
+  cuál seguir. Ahí también aparece el autoguardado, que no se puede pisar a mano.
+- Cada ranura muestra una miniatura del escenario, el nombre del jugador, en qué
+  escena quedó, la fecha y la última línea que leyó.
+- Pisar o borrar una partida pide un segundo toque, para no perderla sin querer.
+- La `×` de cada ranura la borra. "Borrar la partida guardada", en Opciones, las
+  borra todas.
+
+Para cambiar cuántas ranuras hay, tocá `RANURAS` arriba de `js/motor.js`.
+
 ### Fichas del panel "Personajes"
 
 En el menú hay un panel que arma las fichas solo, a partir de `PERSONAJES`.
@@ -228,7 +275,8 @@ si el guardado perdió algo. Conviene correrlo después de tocar el motor.
 - Decisiones que se recuerdan y cambian el texto de las escenas siguientes
 - Efecto máquina de escribir; un toque completa la línea, otro avanza
 - Modo AUTO y modo saltar (`>>`)
-- Guardar / Cargar (queda en el navegador) y autoguardado en cada línea
+- **6 ranuras de guardado** más autoguardado, con miniatura del escenario,
+  fecha y la última línea de cada partida
 - Crossfade entre fondos, sprites posicionables y precarga de todas las imágenes
 - Música con botón de silencio
 - Botón de pantalla completa

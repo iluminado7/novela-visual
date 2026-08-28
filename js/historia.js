@@ -44,7 +44,8 @@ const PERSONAJES = {
     carpeta: "assets/img/personajes/alvaro/",
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
-    chibi: "assets/img/personajes/chibis/alvaro.png",
+    chibi: "assets/img/personajes/chibis/alvaro-chibbi-saltando.png",
+    chibiSalto: "assets/img/personajes/chibis/alvaro-chibbi-saltando.png",
     perfil: "El que habla más fuerte y decide a dónde van todos. " +
             "",
   },
@@ -54,6 +55,7 @@ const PERSONAJES = {
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/pato.png",
+    chibiSalto: "assets/img/personajes/chibis/pato-saltando.png",
     perfil: "Habla poco y cuando habla es para bajar a alguien un " +
             "renglón. No lo hace en serio.",
   },
@@ -63,6 +65,7 @@ const PERSONAJES = {
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/mauri.png",
+    chibiSalto: "assets/img/personajes/chibis/mauri-saltando.png",
     perfil: "Persona tranquila. Muy responsable y servicial. " +
             ".",
   },
@@ -72,6 +75,7 @@ const PERSONAJES = {
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/lucas.png",
+    chibiSalto: "assets/img/personajes/chibis/lucas-saltando.png",
     perfil: "Siempre parece recién despertado. Se queda hasta las cuatro " +
             "de la mañana jugando y llega igual que vos: justo.",
   },
@@ -81,6 +85,7 @@ const PERSONAJES = {
     poses: ["normal", "pensando", "enojada", "triste", "orgullosa"],
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/iara.png",
+    chibiSalto: "assets/img/personajes/chibis/iara-saltando.png",
     // Todavía no aparece en el guion: escribile el perfil cuando la sumes.
     perfil: "Anteojos, pelo largo, campera del instituto. Aparece en el Acto 2.",
   },
@@ -91,6 +96,7 @@ const PERSONAJES = {
     poses: ["normal", "pensando", "enojado", "triste", "orgulloso"],
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/franco.png",
+    chibiSalto: "assets/img/personajes/chibis/franco-saltando.png",
     perfil: "Sabe de todo un poco y le gusta que se note, pero cuando " +
             "hay que entregar algo es el único que lo tiene hecho.",
   },
@@ -617,7 +623,284 @@ const HISTORIA = {
     { si: "hablaste",   texto: "Le hablaste en el andén.\n\nDiste el primer paso para vencer tu miedo de hablar con las mujeres." },
     { sino: "hablaste", texto: "Pasaste de largo en el andén y ella igual te vino a buscar.\n\nSos la maquina" },
     { texto: "Se continúa cuando Franco deje de ser un vago" },
-    { fin: true },
+    { ir: "respuesta_aiko" },
   ],
 
+  /* ================= ACTO 2 ================= */
+
+  /* ---------- Le contestás ---------- */
+  respuesta_aiko: [
+    { fondo: "computacion" },
+    { texto: "Me quede recalculando...\n ¿Mi casa?... Es en serio?.." },
+    { si:"hablaste", texto: "Entiendo que este sea el primer dia que me anime en dirigirle la palabra pero...\n\ ¿No es demasiado?" },
+    {sino:"hablaste", texto:"¡¿Que clase de chica me solicita esto el primer dia que hablamos?! \n\ Ni siquiera tuve que acercarme"},
+    {texto: "¡ES UNA LOCURA!"},
+    {texto: "O acaso, ¿ella es asi y siempre y estoy dandole vueltas al pedo?"},
+    { esperar: 400 },
+
+    {aiko: "normal-triste"},
+    { quien: "aiko", texto: "Che... {nombre}" },
+    { texto: "Es verdad, todavia esta alli esperando mi respuesta. \n\ ¿Cuanto me colgue?... Debo parecer un lelo" },
+    {aiko: "normal-feliz"},
+    { quien: "aiko", texto: "Que onda, ¿al final vas a venir a mi casa?" },
+    {texto: "¿que?"},
+    { quien: "aiko", texto: "Si bo, esto no lo terminamos mas. Podes venir a mi casa y lo terminamos." },
+    { quien: "aiko", texto: "Siempre y cuando puedas y quieras. No tengo drama" },
+    {texto: "Habia jurado que ella me pidio venir a mi casa, no a la de ella..."},
+    {texto: "Eso cambia las cosas"},
+
+    {
+      opciones: [
+        { texto: "Si, no tengo drama",        ir: "aceptar_invitacion" },
+        { texto: "Perdon, tengo cosas para hacer", ir: "rechazar_invitacion" },
+      ]
+    },
+  ],
+  /* ---------- 2a. Aceptás la invitación ---------- */
+  aceptar_invitacion: [
+    { recordar: "aceptaste_invitacion" },
+    { aiko: "normal-feliz", donde: "derecha" },
+
+    { quien: "yo", texto: "Sí, dale. No tengo drama." },
+    { texto: "Lo dije rápido, antes de que la parte de mi cabeza que arruina todo llegara a opinar." },
+    { esperar: 500 },
+
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Uh. Mirá vos." },
+    { quien: "yo", texto: "¿Qué?" },
+    { quien: "aiko", texto: "Nada. Pensé que ibas a inventar algo." },
+    { esperar: 400 },
+
+    { si: "hablaste", texto: "Y podría haberlo hecho. Pero hoy ya me había salido bien una vez, allá en el andén." },
+    { si: "hablaste", texto: "Capaz eso funciona así. Capaz una vez te habilita la siguiente." },
+    { sino: "hablaste", texto: "Tenía razón, igual." },
+    { sino: "hablaste", texto: "Esta misma mañana me había inventado seis excusas para no cruzar diez metros de andén." },
+    { sino: "hablaste", texto: "Seis. Las conté mientras el tren arrancaba." },
+    { esperar: 500 },
+
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Bueno. ¿Mañana después de clase te sirve?" },
+    { quien: "yo", texto: "Sí." },
+    { quien: "aiko", texto: "Vivo en Zavaleta. ¿Sabés llegar?" },
+    { quien: "yo", texto: "...más o menos." },
+    { esperar: 400 },
+
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Te paso la ubicación igual. Pero bajás en mi misma estación, eh." },
+    { esperar: 600 },
+    { texto: "Su misma estación." },
+    { texto: "Seis meses bajando en la misma estación, a la misma hora, en el mismo vagón." },
+    { texto: "Y yo mirando el piso." },
+    { esperar: 500 },
+
+    /* Los del fondo escuchan. Siempre escuchan. */
+    { mauri: "orgulloso", donde: "izquierda" },
+    { quien: "mauri", texto: "¡EEEEH! ¿ESCUCHARON?" },
+    { aiko: "normal-enojada" },
+    { quien: "aiko", texto: "Mauri, te juro por lo que más quieras." },
+    { mauri: "pensando" },
+    { quien: "mauri", texto: "Yo no dije nada. Estoy laburando." },
+    { quien: "mauri", texto: "*no estaba laburando*" },
+    { esperar: 400 },
+
+    { mauri: null, aiko: null,franco: "orgulloso", donde: "izquierda" },
+    { quien: "franco", texto: "Che, {nombre}." },
+    { quien: "yo", texto: "Qué." },
+    { quien: "franco", texto: "Si necesitás las fórmulas te las paso." },
+    { quien: "yo", texto: "...gracias." },
+    { franco: "normal" },
+    { quien: "franco", texto: "De nada. Igual ya las tenés, te las mandé hace media hora." },
+    { texto: "Miré el teléfono. Era verdad." },
+    { texto: "Un mensaje de alguien que hasta esta mañana no sabía que existía." },
+    { texto: "Leo los mensajes, las formular en png, se ve que es su letra... La de un doctor se comprende mas que esta aberracidad." },
+    { texto: "Pero el ultimo mensaje era otro... " },
+    {texto: "Franco_Escuela: A Aiko le gusta comer de las facturas de los Moyano, son sus favoritas. Y no seas tan timido, ella es lo contrario a lo que seguro pensas, es re gauchita"},
+    {texto: "..."},
+    {texto: "Mire a Franco con dudas. ¿Sabia que iba a ir a su casa?"},
+    {franco: "orgulloso" ,donde: "centro"},
+    {quien: "franco", texto: "Te pase exactamente las 3 'formulas'..."},
+    {quien: "franco", texto: "jeje"},
+    {texto: "en realidad habiamos visto solo dos formulas del excel, esa tercera no intuyo que sea algo relacionado con las clases viendo ese menasje"},
+    {texto: "¿Esta tratando de ayudarme?"},
+    { esperar: 600 },
+
+    { franco: null },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Aiko volvió a la pantalla como si nada de todo esto hubiera pasado." },
+    { texto: "Yo me quedé un rato largo con una sensación rara en el pecho, tratando de identificarla." },
+    { esperar: 500 },
+    { texto: "Tardé en darme cuenta de que era entusiasmo." },
+    { texto: "Hacía tanto que no lo sentía que no lo reconocí de entrada." },
+    { ir: "fin_de_clase" },
+  ],
+
+  /* ---------- 2b. Rechazás la invitación ---------- */
+  rechazar_invitacion: [
+    { recordar: "rechazaste_invitacion" },
+    { aiko: "normal-feliz", donde: "centro" },
+
+    { quien: "yo", texto: "Perdón, tengo cosas para hacer." },
+    { esperar: 700 },
+    { texto: "No tenía nada para hacer." },
+    { texto: "Lo dije igual, con la voz de alguien que tiene la agenda llena, que es una voz que practiqué mucho." },
+    { esperar: 500 },
+
+    { aiko: "normal-triste" },
+    { texto: "Se le movió algo en la cara. Un cuarto de segundo." },
+    { texto: "Después lo tapó, que es exactamente lo que hago yo." },
+    { esperar: 400 },
+
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Ah, joya. Tranquilo." },
+    { quien: "aiko", texto: "Lo terminamos en el recreo largo mañana, no pasa nada." },
+    { esperar: 500 },
+
+    { texto: "Y ahí ya estaba haciendo la cuenta." },
+    { texto: "Diez segundos desde que dije que no. Doce. Quince." },
+    { texto: "Quince segundos y ya me quería morir." },
+    { esperar: 600 },
+
+    { si: "hablaste", texto: "Lo peor era que hoy a la mañana lo había hecho bien." },
+    { si: "hablaste", texto: "Una vez. Una sola vez en todo el día, y parece que con eso se me acabó la cuota." },
+    { sino: "hablaste", texto: "Dos veces en el mismo día." },
+    { sino: "hablaste", texto: "En el andén y acá. Récord personal, y eso que el récord ya era mío." },
+    { esperar: 500 },
+
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Che, {nombre}." },
+    { quien: "yo", texto: "¿Qué?" },
+    { quien: "aiko", texto: "No hace falta que pongas esa cara. Era una propuesta, no un examen." },
+    { esperar: 400 },
+    { quien: "yo", texto: "No estoy poniendo ninguna cara." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Estás poniendo una cara." },
+    { esperar: 600 },
+
+    { texto: "Me toqué la cara sin querer. Un movimiento tonto, de reflejo." },
+    { texto: "Ella se rió con la nariz, sin abrir la boca. Un ruido chiquito." },
+    { texto: "No fue burla. Eso fue lo que más me descolocó." },
+    { esperar: 500 },
+
+    /* Los del fondo, que escuchan todo. */
+    {aiko:null},
+    { mauri: "pensando", donde: "izquierda" },
+    { quien: "mauri", texto: "Che, ¿escucharon algo?" },
+    { mauri: null, pato: "normal", donde: "izquierda" },
+    { quien: "pato", texto: "No." },
+    { quien: "pato", texto: "Y vos tampoco." },
+    { esperar: 400 },
+    { texto: "Gracias, Pato." },
+    { texto: "En serio." },
+    { esperar: 500 },
+
+    { pato: null },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Aiko volvió a la pantalla y siguió tipeando como si nada." },
+    { texto: "Yo me quedé mirando el cursor otra vez." },
+    { esperar: 400 },
+    { quien: "yo", texto: "...Aiko." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "¿Mmm?" },
+    { esperar: 700 },
+    { texto: "Y no me salió nada." },
+    { texto: "Se me quedó atravesado en algún lado entre la cabeza y la boca, como siempre." },
+    { quien: "yo", texto: "Nada. Después te digo." },
+    { esperar: 500 },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Dale. Después me decís." },
+    { texto: "Lo dijo sin dudar, como si fuera obvio que iba a haber un después." },
+    { ir: "fin_de_clase" },
+  ],
+
+  /* ---------- 2c. Termina la clase ---------- */
+  fin_de_clase: [
+    { esperar: 500 },
+    { texto: "El profesor volvió del café justo cuando faltaban tres minutos, que es su especialidad." },
+    { texto: "Pasó por las filas mirando pantallas sin mirarlas, dijo dos cosas sobre el formato de entrega y se paró al lado de la puerta." },
+    { esperar: 400 },
+
+    {aiko: null, alvaro: "pensando", donde: "izquierda" },
+    { quien: "alvaro", texto: "Profe, ¿para cuándo era?" },
+    { texto: "El profesor no contestó." },
+    { alvaro: "triste" },
+    { quien: "alvaro", texto: "Profe." },
+    { texto: "Nada." },
+    { alvaro: null, franco: "orgulloso", donde: "centro" },
+    { quien: "franco", texto: "Era para hoy." },
+    {alvaro: "enojado", donde: "derecha" },
+    { quien: "alvaro", texto: "Franco te juro que un día de estos..." },
+    { esperar: 500 },
+
+    { franco: null, alvaro: null },
+    { texto: "Sonó el timbre." },
+    { texto: "Ese ruido que en este colegio no suena, más bien raspa." },
+    { esperar: 600 },
+
+    { aiko: "normal-feliz", donde: "centro" },
+    { texto: "Guardamos el archivo tres veces, porque estas máquinas son de 2011 y uno aprende." },
+    { texto: "Ella cerró todo, se colgó la mochila de un hombro y esperó." },
+    { esperar: 400 },
+
+    /* La despedida cambia según lo que contestaste. */
+    { si: "aceptaste_invitacion", aiko: "pensando-feliz" },
+    { si: "aceptaste_invitacion", quien: "aiko", texto: "Entonces mañana." },
+    { si: "aceptaste_invitacion", quien: "yo", texto: "Mañana." },
+    { si: "aceptaste_invitacion", texto: "Y quedó ahí, dicho dos veces, como si hiciera falta confirmarlo." },
+    { si: "aceptaste_invitacion", texto: "Capaz hacía falta." },
+
+    { si: "rechazaste_invitacion", aiko: "pensando-feliz" },
+    { si: "rechazaste_invitacion", quien: "aiko", texto: "Recreo largo, mañana. No te me hagas el ocupado." },
+    { si: "rechazaste_invitacion", quien: "yo", texto: "No." },
+    { si: "rechazaste_invitacion", texto: "Y me di cuenta de que no me estaba dando una segunda chance." },
+    { si: "rechazaste_invitacion", texto: "Me estaba avisando que la primera seguía abierta." },
+    { esperar: 700 },
+
+    { texto: "Salimos de la sala con el resto del curso, todos en el mismo embudo de la puerta." },
+    { texto: "El pasillo del subsuelo huele a humedad y a alcohol en gel desde hace años." },
+    { esperar: 400 },
+
+    { mauri: "orgulloso", donde: "izquierda" },
+    { quien: "mauri", texto: "¡BANDA! Recreo largo. Cancha." },
+    { mauri: null, lucas: "triste", donde: "izquierda" },
+    { quien: "lucas", texto: "Yo tengo sueño." },
+    { quien: "mauri", texto: "Lucas tenés sueño desde marzo." },
+    { quien: "lucas", texto: "Y voy a seguir teniendo." },
+    { esperar: 500 },
+
+    { lucas: null },
+    { texto: "Subimos las escaleras en manada, con ese ruido de treinta pares de zapatillas que hace temblar el pasamanos." },
+    { texto: "Aiko iba adelante, hablando con alguien que no alcancé a ver." },
+    { esperar: 400 },
+
+    { si: "aceptaste_invitacion", texto: "Y yo iba atrás, como siempre." },
+    { si: "aceptaste_invitacion", texto: "Pero por primera vez en mucho tiempo, atrás de algo. No solamente atrás." },
+
+    { si: "rechazaste_invitacion", texto: "Y yo iba atrás, como siempre." },
+    { si: "rechazaste_invitacion", texto: "Repasando la frase que no me salió, buscándole una versión que sirviera para mañana." },
+    { si: "rechazaste_invitacion", texto: "Nunca encuentro esa versión. Pero la sigo buscando, que ya es algo." },
+    { aiko: null },
+    { texto: "Siento dos manos enormes agarrarme"},
+    {texto: "Franco iba atras mio, agarrando mis hombros como si fuese una salida en trencito de primaria." },
+    { texto: "A parecer le caigo bien... Pero me disgusta su personalidad infantil." },
+    { esperar: 600 },
+
+
+    { texto: "Salimos al patio." },
+    { texto: "Once y veinte de la mañana, sol de frente, el griterío de siempre." },
+    { esperar: 500 },
+    { texto: "Y por una vez no busqué el rincón de la sombra." },
+    { ir: "por_escribir" },
+  ],
+
+  /* ---------- Hasta acá está escrito ---------- */
+  por_escribir: [
+    { esperar: 800 },
+    { fondo: "patio" },
+    { esperar: 600 },
+    { texto: "CONTINUARÁ" },
+    { si: "aceptaste_invitacion",  texto: "Mañana vas a la casa de Aiko." },
+    { si: "rechazaste_invitacion", texto: "Mañana la ves en el recreo largo. Ella insistió; vos todavía no dijiste nada." },
+    { texto: "Seguí escribiendo desde acá en js/historia.js." },
+    { fin: true },
+  ],
 };

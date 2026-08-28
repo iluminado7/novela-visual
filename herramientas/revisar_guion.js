@@ -55,6 +55,13 @@ for (const [nombre, pasos] of Object.entries(HISTORIA)) {
       if (clave === "quien") continue;
       const per = PERSONAJES[clave];
       if (per && per.carpeta && p[clave] != null) {
+        // Error facil de cometer: escribir "null" entre comillas (texto) en vez
+        // de null (el valor). Con comillas el motor busca un sprite llamado asi.
+        if (String(p[clave]) === "null") {
+          ok(false, `${donde}: ${clave}: "null" está entre comillas. Para sacarlo ` +
+                    `de pantalla va sin comillas: { ${clave}: null }`);
+          continue;
+        }
         const rel = per.carpeta + p[clave] + ".png";
         ok(existe(rel), `${donde}: falta el sprite ${rel}`);
       }
@@ -91,6 +98,10 @@ for (const [alias, ruta] of Object.entries(MUSICA))
 for (const [clave, per] of Object.entries(PERSONAJES)) {
   if (per.chibi)
     ok(existe(per.chibi), `${clave}: el chibi ${per.chibi} no existe`);
+  if (per.chibiSalto)
+    ok(existe(per.chibiSalto), `${clave}: el chibi saltando ${per.chibiSalto} no existe`);
+  if (per.chibiSalto && !per.chibi)
+    ok(false, `${clave}: tiene chibiSalto pero le falta chibi (la pose quieta)`);
 }
 for (const [clave, per] of Object.entries(PERSONAJES))
   (per.poses || []).forEach((pose) =>

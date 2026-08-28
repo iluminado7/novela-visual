@@ -115,6 +115,32 @@ HOJAS = [
         "pasadas": [(8, 5), (10, 7), (12, 9), (14, 11)],
     },
     {
+        "origen":  PERSONAJES / "chibis" / "franco-chibbi.png",
+        "destino": PERSONAJES / "chibis",
+        "poses":   ["franco", "franco-saltando"],
+        "croma":   (0, 255, 0),
+    },
+    {
+        "origen":  PERSONAJES / "chibis" / "lucas-chibi.png",
+        "destino": PERSONAJES / "chibis",
+        "poses":   ["lucas", "lucas-saltando"],
+        "croma":   (0, 255, 0),
+    },
+    {
+        "origen":  PERSONAJES / "chibis" / "pato-chibbi.png",
+        "destino": PERSONAJES / "chibis",
+        "poses":   ["pato", "pato-saltando"],
+        "croma":   (0, 255, 0),
+    },
+    {
+        # Los chibis nuevos vienen de a dos por archivo (parado y saltando),
+        # sobre verde. Se separan igual que las hojas de expresiones.
+        "origen":  PERSONAJES / "chibis" / "iara-chibbi.png",
+        "destino": PERSONAJES / "chibis",
+        "poses":   ["iara", "iara-saltando"],
+        "croma":   (0, 255, 0),
+    },
+    {
         # Los chibis vienen los seis pegados en una tira chica (571x200), sin
         # separacion limpia entre uno y otro, asi que hay que detectarlos.
         # Al ser tan chica, los grosores grandes se le comerian el detalle.
@@ -378,12 +404,18 @@ def procesar(hoja):
     print(f"  {origen.name}  ({W}x{H}, {len(poses)} figuras)")
 
     def guardar(sprite, nombre):
+        salida = destino / f"{nombre}.png"
+        if salida.resolve() == origen.resolve():
+            # Pisar la hoja original la arruina: la segunda pasada le devolveria
+            # el fondo y ya no habria forma de recortarla de nuevo.
+            print(f"  ! {nombre}: el destino es el mismo archivo de origen. Lo salteo.")
+            print(f"    Ponele otro nombre a la pose, o mové la hoja a otra carpeta.")
+            return 0
         caja = sprite.getbbox()
         if not caja:
             print(f"  ! {nombre}: quedo vacio, revisa el color de fondo")
             return 0
         sprite = sprite.crop(caja)
-        salida = destino / f"{nombre}.png"
         sprite.save(salida, optimize=True)
         kb = salida.stat().st_size // 1024
         print(f"  {salida.relative_to(RAIZ)}  ({sprite.width}x{sprite.height}, {kb} KB)")
@@ -449,7 +481,11 @@ def procesar(hoja):
     for i, pose in enumerate(poses):
         caja = (cortes[i], 0, cortes[i + 1], hojita.height)
         if croma:
-            sprite = limpiar_sueltos(limpia.crop(caja))
+            sprite = limpia.crop(caja)
+            # Con una sola figura no hay vecino que se cuele, y filtrar de mas
+            # le comeria los destellos y la sombra.
+            if n > 1:
+                sprite = limpiar_sueltos(sprite)
         elif mascara is not None:
             alfa = _mayor_silueta(mascara[:, cortes[i]:cortes[i + 1]])
             sprite = Image.fromarray(
