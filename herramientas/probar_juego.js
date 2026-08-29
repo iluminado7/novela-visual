@@ -154,7 +154,8 @@ async function jugar(nombreJugador, elegir) {
   await esperar();
 
   let guardias = 0, ultimo = null, decisiones = 0;
-  while (guardias++ < 600) {
+  const TOPE = 6000;   // muy por encima de los pasos que tiene la historia
+  while (guardias++ < TOPE) {
     if (nodos.dialogo.classList.contains("oculto") === false && nodos.texto.textContent !== ultimo) {
       ultimo = nodos.texto.textContent;
       vistas.push((nodos.nombre.textContent ? nodos.nombre.textContent + ": " : "") + ultimo);
@@ -179,7 +180,8 @@ async function jugar(nombreJugador, elegir) {
     nodos.avanzar.click();
     await esperar();
   }
-  if (guardias >= 600) throw new Error("la historia no termino (bucle infinito?)");
+  if (guardias >= TOPE)
+    throw new Error(`la historia no termino en ${TOPE} pasos: hay un bucle, o subi TOPE`);
   return { vistas, sprites: [...sprites], fondos, pistas: [...pistas], musicaEnMenu };
 }
 
@@ -190,8 +192,22 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
   const errores = [];
 
   // Las cuatro combinaciones de las dos decisiones, mas el nombre vacio.
-  for (const [n, e] of [["Fede", [0, 0]], ["Ana Lucia", [1, 1]],
-                        ["Rocio", [0, 1]], ["Tomi", [1, 0]], ["", [0, 0]]]) {
+  // 5 decisiones ya: probamos recorridos representativos en vez de todas las
+  // combinaciones. Primero siempre la 1a opcion, despues siempre la ultima, y
+  // despues mezclas que tocan los extremos de afinidad.
+  // Las 7 decisiones, en el orden en que aparecen:
+  //   1 andén · 2 invitación · 3 chiste de Álvaro · 4 foto de Pato
+  //   5 alfajor · 6 manga de Iara · 7 Mauri
+  for (const [n, e] of [
+        // el que se lleva bien con todos
+        ["Fede",      [0, 0, 1, 0, 0, 0, 0]],
+        // el que se lleva mal con todos: pasa de largo, rechaza, bardea y miente
+        ["Ana Lucia", [1, 1, 2, 2, 2, 1, 1]],
+        // mezcla: le miente a Iara pero se acerca a Mauri
+        ["Rocio",     [0, 1, 0, 1, 1, 1, 0]],
+        // mezcla al revés: banca a Álvaro, ignora a Pato y a Mauri
+        ["Tomi",      [1, 0, 1, 2, 0, 0, 1]],
+        ["",          [0, 0, 0, 0, 0, 0, 0]]]) {
     const r = await jugar(n, e);
     console.log(`     ${r.vistas.length} lineas`);
     console.log(`     sprites: ${r.sprites.map(corto).sort().join(", ")}`);
@@ -261,6 +277,9 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
     if (!g) errores.push("btnGuardar no escribio nada");
     else {
       if (g.nombreJugador !== esperado) errores.push(`el guardado perdio el nombre (${g.nombreJugador})`);
+      const af = g.afinidad || {};
+      const resumen = Object.entries(af).map(([k, v]) => `${k} ${v > 0 ? "+" : ""}${v}`).join(", ");
+      console.log(`     afinidad: ${resumen || "(nadie sumo todavia)"}`);
       if (e[0] === 0 && !g.banderas.hablaste) errores.push("el guardado perdio la bandera 'hablaste'");
       if (e[0] === 1 && g.banderas.hablaste)  errores.push("la bandera 'hablaste' quedo puesta sin haber hablado");
     }

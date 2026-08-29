@@ -69,6 +69,32 @@ for (const [nombre, pasos] of Object.entries(HISTORIA)) {
   });
 }
 
+/* --- 1c) La afinidad: que apunte a personajes reales y este bien formada --- */
+const mueven = new Set(), consultada = new Map();
+for (const [nombre, pasos] of Object.entries(HISTORIA))
+  (pasos || []).forEach((p, i) => {
+    const donde = `${nombre}[${i}]`;
+    if ("afinidad" in p) {
+      if (typeof p.afinidad !== "object" || p.afinidad === null)
+        ok(false, `${donde}: "afinidad" tiene que ser un objeto, ej { alvaro: 1 }`);
+      else for (const [clave, delta] of Object.entries(p.afinidad)) {
+        ok(PERSONAJES[clave], `${donde}: afinidad con "${clave}", que no está en PERSONAJES`);
+        ok(typeof delta === "number", `${donde}: afinidad."${clave}" tiene que ser un número`);
+        mueven.add(clave);
+      }
+    }
+    if ("siAfinidad" in p) {
+      ok(PERSONAJES[p.siAfinidad],
+         `${donde}: siAfinidad de "${p.siAfinidad}", que no está en PERSONAJES`);
+      ok(p.min != null || p.max != null,
+         `${donde}: siAfinidad sin "min" ni "max": nunca va a filtrar nada`);
+      if (!consultada.has(p.siAfinidad)) consultada.set(p.siAfinidad, donde);
+    }
+  });
+for (const [clave, donde] of consultada)
+  if (!mueven.has(clave))
+    console.log(`  !  ${donde}: se consulta la afinidad de "${clave}", pero ningún paso se la mueve`);
+
 /* --- 1b) Las banderas: toda la que se consulta tiene que ponerse en algun lado --- */
 const puestas = new Set(), consultadas = new Map();
 for (const [nombre, pasos] of Object.entries(HISTORIA))

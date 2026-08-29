@@ -28,6 +28,13 @@ const el = {
 
 const ESPERA_AUTO = 1400;  // ms extra en modo auto
 const CLAVE_SAVE  = "novela-visual-save";
+/* Afinidad: cuánto conectó el jugador con cada personaje. Se mueve con los
+   pasos { afinidad: {...} } del guion y se consulta con { siAfinidad: ... }.
+   El piso es negativo pero cortito: se puede caer mal, pero no cavar un pozo
+   del que ya no se sale. */
+const AFINIDAD_MIN = -3;
+const AFINIDAD_MAX = 10;
+
 const RANURAS     = 6;                      // cuantos puntos de guardado tiene el jugador
 const CLAVE_AJUSTES  = "novela-visual-ajustes";
 const CLAVE_CONOCIDOS = "novela-visual-conocidos";
@@ -57,6 +64,7 @@ const estado = {
   musica: null,
   nombreJugador: NOMBRE_POR_DEFECTO,
   banderas: {},         // lo que el jugador hizo: { hablaste: true }
+  afinidad: {},         // cuánto se acercó a cada uno: { alvaro: 3, pato: -1 }
   spritesActivos: {},   // { aiko: {pose:"normal-feliz", donde:"centro"} }
   escribiendo: false,
   enOpciones: false,
@@ -121,6 +129,28 @@ function conocer(clave){
   if (set.has(clave)) return;
   set.add(clave);
   try{ localStorage.setItem(CLAVE_CONOCIDOS, JSON.stringify([...set])); }catch(e){}
+}
+
+/* ---------------- Afinidad ---------------- */
+function afinidadDe(clave){
+  return estado.afinidad[clave] || 0;
+}
+
+function moverAfinidad(cambios){
+  for (const [clave, delta] of Object.entries(cambios || {})){
+    if (typeof delta !== "number") continue;
+    const nueva = afinidadDe(clave) + delta;
+    estado.afinidad[clave] = Math.max(AFINIDAD_MIN, Math.min(AFINIDAD_MAX, nueva));
+  }
+}
+
+/* ¿Se cumple el { siAfinidad } de este paso? */
+function cumpleAfinidad(p){
+  if (!("siAfinidad" in p)) return true;
+  const valor = afinidadDe(p.siAfinidad);
+  if (p.min != null && valor < p.min) return false;
+  if (p.max != null && valor > p.max) return false;
+  return true;
 }
 
 /* ---------------- Texto con variables ---------------- */
@@ -307,13 +337,17 @@ function ejecutar(p){
   //   { si:   "hablaste", texto: "..." }  -> solo si la bandera esta puesta
   //   { sino: "hablaste", texto: "..." }  -> solo si NO esta puesta
   if (("si"   in p && !estado.banderas[p.si]) ||
-      ("sino" in p &&  estado.banderas[p.sino])){
+      ("sino" in p &&  estado.banderas[p.sino]) ||
+      !cumpleAfinidad(p)){
     siguiente();
     return;
   }
 
   // { recordar: "hablaste" } deja anotado algo para consultarlo mas adelante.
   if ("recordar" in p) estado.banderas[p.recordar] = true;
+
+  // { afinidad: { alvaro: 1, pato: -1 } } mueve la relacion con cada uno.
+  if ("afinidad" in p) moverAfinidad(p.afinidad);
 
   // Los pasos "de escenario" se aplican y siguen solos, sin pedir clic.
   if ("fondo"  in p) ponerFondo(p.fondo);
@@ -401,6 +435,7 @@ function instantanea(){
     fondo: estado.fondo, musica: estado.musica,
     nombreJugador: estado.nombreJugador,
     banderas: estado.banderas,
+    afinidad: estado.afinidad,
     sprites: estado.spritesActivos,
   };
 }
@@ -595,6 +630,7 @@ function aplicar(d){
   el.opciones.classList.add("oculto");
   estado.nombreJugador = d.nombreJugador || NOMBRE_POR_DEFECTO;
   estado.banderas = d.banderas || {};
+  estado.afinidad = d.afinidad || {};
   PERSONAJES.yo.nombre = estado.nombreJugador;
   estado.spritesActivos = d.sprites || {};
   dibujarSprites();
@@ -729,7 +765,9 @@ function llenarPersonajes(){
 
     const datos = document.createElement("div");
     const h = document.createElement("h4");
-    h.textContent = visible ? per.nombre : "???";
+    // El protagonista lleva el nombre del jugador, que cambia en cada partida:
+    // en la ficha conviene un rótulo fijo.
+    h.textContent = visible ? (per.nombreFicha || per.nombre) : "???";
     h.style.color = per.color || "var(--acento)";
     const desc = document.createElement("p");
     desc.textContent = visible ? per.perfil : "Todavia no lo conoces.";
@@ -919,6 +957,7 @@ function confirmarNombre(){
   PERSONAJES.yo.nombre = estado.nombreJugador;
   el.pantallaNombre.classList.add("oculto");
   estado.banderas = {};
+  estado.afinidad = {};
   irAEscena("inicio");
 }
 

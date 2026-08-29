@@ -55,7 +55,10 @@ herramientas/probar_juego.js     juega la historia entera sin abrir el navegador
 
 ## Cómo escribir la historia
 
-> **Para escribir el guion, la guía completa está en [GUION.md](GUION.md):**
+> **Para escribir el guion:** [GUION.md](GUION.md) tiene la guía completa y
+> [RELACIONES.md](RELACIONES.md) el sistema de afinidad con cada personaje.
+>
+> [GUION.md](GUION.md) cubre:
 > decisiones, caminos que se separan y se juntan, banderas, cambios de
 > escenario y de sprites, personajes nuevos y errores comunes.
 > Lo que sigue acá es el resumen.

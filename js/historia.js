@@ -21,7 +21,16 @@
 ----------------------------------------------------------------- */
 const PERSONAJES = {
   narrador: { nombre: "",   color: "#cfd6e6" },
-  yo:       { nombre: "Yo", color: "#9ad0ff" },
+  yo: {
+    nombre: "Yo",              // en la partida lo reemplaza el nombre del jugador
+    nombreFicha: "Vos",        // como aparece en el panel "Personajes"
+    color: "#9ad0ff",
+    perfil: "Contás los minutos de todo: los once hasta la estación, los " +
+            "segundos que tarda alguien en contestarte, las excusas que te " +
+            "inventás. Salís cuarenta minutos antes y te sentás donde nadie " +
+            "te hable, y te repetís que es porque a esta hora no hay que " +
+            "hablar con nadie. Te lo repetís bastante seguido.",
+  },
 
   aiko: {
     nombre: "Aiko",
@@ -46,8 +55,10 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/alvaro.png",
     chibiSalto: "assets/img/personajes/chibis/alvaro-chibbi-saltando.png",
-    perfil: "El que habla más fuerte y decide a dónde van todos. " +
-            "",
+    perfil: "El más extrovertido del elenco. Sociable, amiguero, con un chiste " +
+            "para cada momento — incluido el momento en que nadie quería un " +
+            "chiste. No tiene filtro y no le importa la incomodidad. Te va a " +
+            "bancar en la medida en que te acerques vos.",
   },
   pato: {
     nombre: "Pato", color: "#c9b6ff", oculto: true,
@@ -56,8 +67,10 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/pato.png",
     chibiSalto: "assets/img/personajes/chibis/pato-saltando.png",
-    perfil: "Habla poco y cuando habla es para bajar a alguien un " +
-            "renglón. No lo hace en serio.",
+    perfil: "Introvertido, con destellos de extrovertido cuando menos lo " +
+            "esperás. Habla poco y casi siempre en sarcasmo, así que nunca " +
+            "terminás de saber si te está cargando. Es el más difícil de " +
+            "todos: se abre o no según cómo te portes.",
   },
   mauri: {
     nombre: "Mauri", color: "#ffd08a", oculto: true,
@@ -66,8 +79,10 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/mauri.png",
     chibiSalto: "assets/img/personajes/chibis/mauri-saltando.png",
-    perfil: "Persona tranquila. Muy responsable y servicial. " +
-            ".",
+    perfil: "De los más introvertidos del juego. Buen pibe, de actitud " +
+            "tranquila, pero no se va a acercar si no te acercás vos primero. " +
+            "Calmado razona bien; sacalo de su molde y se pone nervioso o se " +
+            "calienta enseguida.",
   },
   lucas: {
     nombre: "Lucas", color: "#8fe3b0", oculto: true,
@@ -76,8 +91,10 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/lucas.png",
     chibiSalto: "assets/img/personajes/chibis/lucas-saltando.png",
-    perfil: "Siempre parece recién despertado. Se queda hasta las cuatro " +
-            "de la mañana jugando y llega igual que vos: justo.",
+    perfil: "Introvertido y de personalidad fría. Dice lo que piensa sin que " +
+            "le tiemble la voz. Es el más inteligente del grupo y, curiosamente, " +
+            "el que menos lo hace notar. Hagas lo que hagas, él va a seguir " +
+            "exactamente igual.",
   },
   iara: {
     nombre: "Iara", color: "#7fc9a8", oculto: true,
@@ -86,8 +103,9 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/iara.png",
     chibiSalto: "assets/img/personajes/chibis/iara-saltando.png",
-    // Todavía no aparece en el guion: escribile el perfil cuando la sumes.
-    perfil: "Anteojos, pelo largo, campera del instituto. Aparece en el Acto 2.",
+    perfil: "Introvertida, tranquila, serena. Racional casi todo el tiempo: " +
+            "no se altera aunque a su alrededor se prenda fuego todo. Cada " +
+            "tanto tira una broma, y más de una vez es humor negro.",
   },
 
   franco: {
@@ -97,8 +115,10 @@ const PERSONAJES = {
     retrato: "normal",
     chibi: "assets/img/personajes/chibis/franco.png",
     chibiSalto: "assets/img/personajes/chibis/franco-saltando.png",
-    perfil: "Sabe de todo un poco y le gusta que se note, pero cuando " +
-            "hay que entregar algo es el único que lo tiene hecho.",
+    perfil: "Extrovertido, jodón y servicial. Hacerlo enojar es casi " +
+            "imposible: se le rebota todo. De los seis es el único que va a " +
+            "estar ahí decidas lo que decidas — con Franco no hay nada que " +
+            "ganarse.",
   },
 };
 
@@ -122,6 +142,11 @@ const FONDOS = {
   patio:       "assets/img/patio.jpg",
   aula:        "assets/img/aula.jpeg",
   computacion: "assets/img/computacion.webp",
+
+  // Ilustrados, del mismo estilo que los personajes.
+  habitacion:      "assets/img/habitacion.png",
+  "patio-colegio": "assets/img/patio-colegio.png",
+  cafeteria:       "assets/img/cafeteria.png",
 };
 
 const MUSICA = {
@@ -889,18 +914,512 @@ const HISTORIA = {
     { texto: "Once y veinte de la mañana, sol de frente, el griterío de siempre." },
     { esperar: 500 },
     { texto: "Y por una vez no busqué el rincón de la sombra." },
+    { ir: "recreo_patio" },
+  ],
+
+  /* =========================================================
+     EL RECREO LARGO
+     patio del colegio -> cafetería
+     Acá empieza a pesar la afinidad: mirá RELACIONES.md.
+     ========================================================= */
+
+  /* ---------- El patio ---------- */
+  recreo_patio: [
+    { fondo: "patio-colegio" },
+    { texto: "El patio a las once y veinte es otra cosa que a las siete y cuarto." },
+    { texto: "El sol pega de frente contra el edificio y rebota, así que todo el mundo termina apiñado en la sombra de los dos árboles." },
+    { esperar: 500 },
+
+    { texto: "Franco me soltó recién cuando llegamos al cantero." },
+    { franco: "orgulloso", donde: "derecha" },
+    { quien: "franco", texto: "Acá. Este es el lugar. Sentate." },
+    { quien: "yo", texto: "¿Hay un lugar?" },
+    { franco: "normal" },
+    { quien: "franco", texto: "Obvio que hay un lugar. Hace tres años que es este." },
+    { esperar: 400 },
+    { texto: "Tres años sentándose en el mismo cantero, a veinte metros de donde yo me siento hace tres años." },
+    { texto: "Veinte metros. Los conté sin querer." },
+    { esperar: 600 },
+
+    /* --- Álvaro dice algo de más --- */
+    { franco: null, alvaro: "normal", donde: "derecha" },
+    { quien: "alvaro", texto: "Che, ¿ustedes vieron el corte de pelo nuevo del de Química?" },
+    { quien: "pato", texto: "No arranques." },
+    { alvaro: "orgulloso" },
+    { quien: "alvaro", texto: "Parece que se peinó con un tenedor. Con un tenedor, banda." },
+    { esperar: 400 },
+    { texto: "Se rió solo, fuerte, sin fijarse quién andaba cerca." },
+    { alvaro: "normal" },
+    { texto: "Y justo atrás pasaba una preceptora." },
+    { esperar: 700 },
+    { texto: "Álvaro no la vio. O la vio y le dio igual, que con él nunca sabés." },
+    { texto: "El resto del banco se quedó esperando a ver qué hacía yo." },
+
+    {
+      opciones: [
+        { texto: "Seguirle el chiste",                    ir: "alvaro_chiste_si" },
+        { texto: "Bancarlo aunque se haya mandado",       ir: "alvaro_bancar" },
+        { texto: "Decirle que es un pesado",              ir: "alvaro_pesado" },
+      ]
+    },
+  ],
+
+  alvaro_chiste_si: [
+    { afinidad: { alvaro: 1 } },
+    { alvaro: "orgulloso", donde: "derecha" },
+    { quien: "yo", texto: "Con un tenedor sucio, además." },
+    { esperar: 400 },
+    { texto: "Álvaro se dio vuelta despacio, como si no pudiera creer lo que acababa de escuchar." },
+    { quien: "alvaro", texto: "¡EEEEH!" },
+    { quien: "alvaro", texto: "¿Escucharon? ¡El calladito!" },
+    { texto: "Me palmeó la espalda tres veces, cada una más fuerte que la anterior." },
+    { quien: "yo", texto: "(me está por dislocar algo)" },
+    { ir: "recreo_hacia_cafeteria" },
+  ],
+
+  alvaro_bancar: [
+    { afinidad: { alvaro: 2 } },
+    { texto: "La preceptora frenó y lo miró." },
+    { alvaro: "triste", donde: "derecha" },
+    { texto: "Álvaro recién ahí se dio cuenta. Se le fue la sonrisa de golpe." },
+    { quien: "yo", texto: "Estábamos hablando de un dibujo animado, señora." },
+    { esperar: 600 },
+    { texto: "Mentira flagrante. Pero la dije tranquilo, mirándola, que es la única forma de que una mentira funcione." },
+    { texto: "La preceptora nos miró tres segundos más y siguió." },
+    { esperar: 500 },
+    { alvaro: "normal" },
+    { quien: "alvaro", texto: "..." },
+    { quien: "alvaro", texto: "Che." },
+    { quien: "yo", texto: "Qué." },
+    { alvaro: "orgulloso" },
+    { quien: "alvaro", texto: "Sos de los míos, vos." },
+    { esperar: 400 },
+    { texto: "No sé si quiero ser de los suyos." },
+    { texto: "Pero era la primera vez que alguien me metía en un plural." },
+    { ir: "recreo_hacia_cafeteria" },
+  ],
+
+  alvaro_pesado: [
+    { afinidad: { alvaro: -2 } },
+    { quien: "yo", texto: "Sos medio pesado, ¿sabías?" },
+    { esperar: 700 },
+    { texto: "Salió más seco de lo que lo pensé." },
+    { alvaro: "triste", donde: "derecha" },
+    { texto: "Se hizo un silencio corto en el banco. De esos que duran poco pero se sienten un rato largo." },
+    { esperar: 500 },
+    { alvaro: "normal" },
+    { quien: "alvaro", texto: "Ja. Sí, me lo dicen." },
+    { texto: "Lo dijo con la misma sonrisa de siempre, y ahí me di cuenta de que era la primera vez que se la veía puesta a propósito." },
+    { esperar: 600 },
+    { quien: "pato", texto: "Uh." },
+    { quien: "yo", texto: "¿Qué?" },
+    { quien: "pato", texto: "Nada. Recién llegás y ya estás repartiendo." },
+    { texto: "Lo dijo sin mover la cara. No supe si me estaba cargando o avisando." },
+    { ir: "recreo_hacia_cafeteria" },
+  ],
+
+  /* ---------- Camino a la cafetería ---------- */
+  recreo_hacia_cafeteria: [
+    { alvaro: null, franco: null },
+    { esperar: 400 },
+    { quien: "mauri", texto: "Che, ¿vamos yendo? Si llegamos tarde no queda nada." },
+    { quien: "franco", texto: "Mauri tiene hambre. Mauri siempre tiene hambre." },
+    { quien: "mauri", texto: "Mauri desayunó a las seis." },
+    { esperar: 400 },
+    { texto: "Se levantaron todos juntos, sin ponerse de acuerdo, como se levanta la gente que hace esto todos los días." },
+    { texto: "Yo me levanté medio segundo tarde. Se nota, esa clase de cosas." },
+    { ir: "cafeteria_llegada" },
+  ],
+
+  /* ---------- La cafetería ---------- */
+  cafeteria_llegada: [
+    { fondo: "cafeteria" },
+    { texto: "La cafetería es lo único del colegio que parece de este siglo." },
+    { texto: "Luces blancas, mesas largas, y un cartel arriba del mostrador que dice HOY ES UN BUEN DÍA PARA TENER UN GRAN DÍA." },
+    { esperar: 400 },
+    { texto: "Nunca entendí ese cartel. Sigo sin entenderlo." },
+    { esperar: 500 },
+
+    { texto: "Los cinco se acomodaron en la mesa del fondo con la naturalidad de quien tiene una mesa." },
+    { texto: "Y en la de al lado, sola, con los auriculares puestos y un libro dado vuelta sobre la mesa, había alguien." },
+    { esperar: 600 },
+
+    { iara: "normal", donde: "izquierda" },
+    { texto: "Anteojos, campera del instituto, el pelo largo tapándole media cara." },
+    { texto: "La había visto mil veces sin verla nunca, que a esta altura del día ya es un patrón." },
+    { esperar: 400 },
+    { quien: "aiko", texto: "Iara, corré la mochila." },
+    { texto: "Iara corrió la mochila sin levantar la vista del teléfono." },
+    { esperar: 500 },
+
+    { aiko: "normal-feliz", donde: "derecha" },
+    { quien: "aiko", texto: "{nombre}, ella es Iara. Va con nosotros pero nunca viene a nada." },
+    { iara: "pensando" },
+    { quien: "iara", texto: "Vengo a esto." },
+    { quien: "aiko", texto: "Esto es sentarse a comer." },
+    { quien: "iara", texto: "Es algo." },
+    { esperar: 500 },
+    { texto: "Recién ahí levantó la cabeza y me miró." },
+    { iara: "normal" },
+    { quien: "iara", texto: "Vos sos el de la ventana." },
+    { quien: "yo", texto: "Ese." },
+    { quien: "iara", texto: "Escribís algo en un cuaderno cuando pensás que nadie te ve." },
+    { esperar: 700 },
+    { texto: "No escribo nada. Hago cuentas." },
+    { texto: "Pero eso no se explica sin quedar peor, así que no dije nada." },
+    { iara: "pensando" },
+    { quien: "iara", texto: "Bueno. Algo escribís." },
+    { ir: "cafeteria_pato" },
+  ],
+
+  /* ---------- Pato y las fotos ---------- */
+  cafeteria_pato: [
+    { esperar: 400 },
+    { iara: null, pato: "pensando", donde: "izquierda" },
+    { texto: "Pato no se sentó. Estaba parado contra el ventanal con el teléfono levantado, buscando algo que yo no veía." },
+    { esperar: 500 },
+    { texto: "Sacó tres fotos seguidas al mismo lugar: la planta del rincón, con el sol atravesándole las hojas." },
+    { texto: "Después se quedó mirando la pantalla con cara de que ninguna de las tres había salido." },
+    { esperar: 600 },
+
+    {
+      opciones: [
+        { texto: "Decirle que la última salió buena", ir: "pato_elogio" },
+        { texto: "Preguntarle qué está buscando",     ir: "pato_pregunta" },
+        { texto: "No decir nada",                     ir: "pato_nada" },
+      ]
+    },
+  ],
+
+  pato_elogio: [
+    { afinidad: { pato: 1 } },
+    { pato: "pensando", donde: "izquierda" },
+    { quien: "yo", texto: "La última salió buena." },
+    { esperar: 500 },
+    { texto: "Bajó el teléfono y me miró como si le hubiera hablado en otro idioma." },
+    { quien: "pato", texto: "¿Vos viste cuál era la última?" },
+    { quien: "yo", texto: "La que sacaste más abajo. Se te metió el reflejo del vidrio y quedó como dos plantas." },
+    { esperar: 700 },
+    { pato: "orgulloso" },
+    { texto: "Se quedó callado un segundo largo." },
+    { quien: "pato", texto: "Era lo que estaba buscando." },
+    { quien: "pato", texto: "Nadie se da cuenta de eso." },
+    { esperar: 400 },
+    { texto: "Volvió a la mesa y se sentó enfrente mío, que hasta ese momento estaba vacío." },
+    { texto: "No dijo nada más. Pero se sentó enfrente." },
+    { ir: "cafeteria_dulce" },
+  ],
+
+  pato_pregunta: [
+    { afinidad: { pato: 2 } },
+    { pato: "pensando", donde: "izquierda" },
+    { quien: "yo", texto: "¿Qué buscás?" },
+    { quien: "pato", texto: "La luz." },
+    { quien: "yo", texto: "...la luz está ahí." },
+    { pato: "normal" },
+    { quien: "pato", texto: "La luz está siempre. Lo difícil es que se note que está." },
+    { esperar: 600 },
+    { texto: "Lo dijo con el mismo tono con el que dice todo, así que no supe si era en serio o me estaba cargando." },
+    { texto: "Después me di cuenta de que con él probablemente sean las dos cosas al mismo tiempo." },
+    { ir: "cafeteria_dulce" },
+  ],
+
+  pato_nada: [
+    { texto: "No dije nada." },
+    { texto: "Guardó el teléfono, se sentó en la punta de la mesa y no volvió a sacarlo." },
+    { esperar: 600 },
+    { texto: "Y estuve como diez minutos pensando que tendría que haber dicho algo, que es mi forma habitual de participar de las cosas." },
+    { ir: "cafeteria_dulce" },
+  ],
+
+  /* ---------- El alfajor ---------- */
+  cafeteria_dulce: [
+    { pato: null },
+    { esperar: 400 },
+    { texto: "Me compré un alfajor porque era lo único que me alcanzaba, y me lo quedé mirando un rato sin abrirlo." },
+    { esperar: 500 },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { quien: "aiko", texto: "Uh. De los negros." },
+    { texto: "Lo dijo sin pedirlo, que es una forma bastante eficiente de pedir algo." },
+    { esperar: 400 },
+    { iara: "pensando", donde: "izquierda" },
+    { texto: "Iara ni levantó la vista, pero apoyó el teléfono boca abajo, que en ella parece ser la forma de prestar atención." },
+    { esperar: 600 },
+
+    {
+      opciones: [
+        { texto: "Partirlo con Aiko",        ir: "dulce_aiko" },
+        { texto: "Convidarle a Iara",        ir: "dulce_iara" },
+        { texto: "Ponerlo en el medio de la mesa", ir: "dulce_mesa" },
+      ]
+    },
+  ],
+
+  dulce_aiko: [
+    { afinidad: { aiko: 1 } },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Lo partí al medio y le di la mitad más grande, porque partir al medio nunca sale al medio." },
+    { quien: "aiko", texto: "Ah, mirá vos. Sos de los que dan la parte grande." },
+    { quien: "yo", texto: "Salió así." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "No salió así. La elegiste." },
+    { esperar: 700 },
+    { texto: "Tenía razón otra vez. Me está empezando a molestar un poco." },
+    { ir: "cafeteria_manga" },
+  ],
+
+  dulce_iara: [
+    { iara: "normal", donde: "izquierda" },
+    { quien: "yo", texto: "¿Querés?" },
+    { esperar: 500 },
+    { texto: "Levantó la vista. Miró el alfajor. Me miró a mí." },
+    { iara: "pensando" },
+    { quien: "iara", texto: "No puedo. Soy diabética." },
+    { esperar: 600 },
+    { quien: "yo", texto: "Uh. Perdón, no sabía." },
+    { iara: "normal" },
+    { quien: "iara", texto: "Obvio que no sabías. Nos conocimos hace cuatro minutos." },
+    { esperar: 400 },
+    { quien: "iara", texto: "Igual gracias. Casi nadie pregunta, directamente comen adelante mío." },
+    { esperar: 500 },
+    { texto: "Volvió al teléfono. Pero antes de volver, hizo un gesto con la cabeza. Cortito." },
+    { texto: "Anoté eso: Iara, diabética. Y lo anoté en serio, porque no soy de olvidarme de los datos." },
+    { ir: "cafeteria_manga" },
+  ],
+
+  dulce_mesa: [
+    { texto: "Lo abrí y lo dejé en el medio de la mesa, sin decir nada." },
+    { esperar: 400 },
+    { quien: "franco", texto: "¡Comunismo!" },
+    { texto: "Franco se llevó la mitad en un movimiento." },
+    { aiko: "normal-triste", donde: "derecha" },
+    { quien: "aiko", texto: "Che, yo lo pedí primero." },
+    { quien: "franco", texto: "Vos no pediste, insinuaste. Es distinto." },
+    { esperar: 600 },
+    { texto: "Aiko me miró como esperando que yo hiciera algo al respecto." },
+    { texto: "No hice nada al respecto, que es mi especialidad." },
+    { ir: "cafeteria_manga" },
+  ],
+
+  /* ---------- La charla de manga, y Mauri ---------- */
+  cafeteria_manga: [
+    { aiko: null },
+    { esperar: 400 },
+    { iara: "pensando", donde: "izquierda" },
+    { texto: "En algún momento Iara giró el libro que tenía dado vuelta sobre la mesa." },
+    { texto: "No era un libro. Era un tomo, y por la tapa lo reconocí antes de poder frenarme." },
+    { esperar: 500 },
+    { quien: "iara", texto: "¿Lo leíste?" },
+    { esperar: 600 },
+
+    { texto: "Y acá viene la parte donde normalmente digo que no." },
+    { texto: "Digo que no a todo, por reflejo, para que la conversación termine antes de tener que sostenerla." },
+    { esperar: 500 },
+
+    {
+      opciones: [
+        { texto: "Decirle la verdad: lo leíste entero dos veces", ir: "manga_verdad" },
+        { texto: "Decirle que no, por reflejo",                   ir: "manga_no" },
+      ]
+    },
+  ],
+
+  manga_verdad: [
+    { recordar: "hablaste_de_manga" },
+    { afinidad: { iara: 2 } },
+    { iara: "normal", donde: "izquierda" },
+    { quien: "yo", texto: "Dos veces." },
+    { esperar: 400 },
+    { quien: "yo", texto: "La segunda para entender el final, que la primera vez no me cerró." },
+    { esperar: 600 },
+    { texto: "Iara se sacó un auricular." },
+    { texto: "No sé por qué, pero eso me pareció importante." },
+    { iara: "orgullosa" },
+    { quien: "iara", texto: "A mí tampoco me cerró." },
+    { quien: "iara", texto: "Estuve dos semanas leyendo teorías de gente que tampoco entendió nada." },
+    { esperar: 400 },
+    { quien: "yo", texto: "¿Y encontraste alguna que sirva?" },
+    { iara: "pensando" },
+    { quien: "iara", texto: "Una. Pero es tan triste que preferiría no haberla leído." },
+    { esperar: 700 },
+    { quien: "yo", texto: "Contámela igual." },
+    { iara: "normal" },
+    { quien: "iara", texto: "Ah, sos de esos." },
+    { texto: "Y me la contó. Y era tan triste como dijo." },
+    { ir: "cafeteria_mauri" },
+  ],
+
+  manga_no: [
+    { quien: "yo", texto: "No, ni idea." },
+    { esperar: 700 },
+    { texto: "Mentira. Lo leí entero dos veces." },
+    { texto: "La segunda para entender el final, que la primera vez no me cerró." },
+    { esperar: 500 },
+    { iara: "pensando", donde: "izquierda" },
+    { texto: "Iara se quedó mirándome un segundo más de lo que dura una mirada normal." },
+    { esperar: 600 },
+    { quien: "iara", texto: "Mmm." },
+    { quien: "iara", texto: "Bueno." },
+    { afinidad: { iara: -2 } },
+    { esperar: 500 },
+    { texto: "Volvió al teléfono y no me habló más en todo el recreo." },
+    { esperar: 400 },
+    { texto: "Y no sé cómo se dio cuenta. Pero se dio cuenta." },
+    { ir: "cafeteria_mauri" },
+  ],
+
+  /* ---------- Mauri, que no se acerca solo ---------- */
+  cafeteria_mauri: [
+    { iara: null },
+    { esperar: 500 },
+    { texto: "Del otro lado de la mesa, Mauri no estaba en la conversación." },
+    { mauri: "pensando", donde: "derecha" },
+    { texto: "Tenía el teléfono apoyado contra el vaso y leía con la cabeza medio agachada, moviendo los labios sin darse cuenta." },
+    { esperar: 500 },
+
+    { si: "hablaste_de_manga", texto: "Desde donde estaba yo se veía la pantalla. Era el mismo tomo del que veníamos hablando." },
+    { sino: "hablaste_de_manga", texto: "Desde donde estaba yo se veía la pantalla. Era un manga, aunque no llegué a ver cuál." },
+    { esperar: 400 },
+
+    { texto: "En todo el recreo no dijo tres frases seguidas, y ninguna me la dijo a mí." },
+    { texto: "No por antipático. Se le nota que no es por antipático." },
+    { esperar: 600 },
+    { texto: "Es de los que esperan que vayas vos." },
+    { texto: "Cosa que yo entiendo bastante bien, porque es exactamente lo que hago." },
+    { esperar: 500 },
+
+    {
+      opciones: [
+        { texto: "Preguntarle en qué tomo va", ir: "mauri_charla" },
+        { texto: "Dejarlo tranquilo",          ir: "mauri_nada" },
+      ]
+    },
+  ],
+
+  mauri_charla: [
+    { afinidad: { mauri: 2 } },
+    { mauri: "pensando", donde: "derecha" },
+    { quien: "yo", texto: "¿En qué tomo vas?" },
+    { esperar: 600 },
+    { texto: "Levantó la cabeza de golpe, como si lo hubiera despertado." },
+    { mauri: "normal" },
+    { quien: "mauri", texto: "¿Eh? Ah. Doce." },
+    { quien: "yo", texto: "Uf. Estás justo antes de la parte." },
+    { esperar: 500 },
+    { mauri: "orgulloso" },
+    { quien: "mauri", texto: "¿QUÉ PARTE?" },
+    { quien: "yo", texto: "Si te digo cuál, te la arruino." },
+    { quien: "mauri", texto: "¡Decime cuál!" },
+    { quien: "yo", texto: "No." },
+    { esperar: 400 },
+    { texto: "Se quedó un rato largo mirándome con el teléfono en la mano, tratando de decidir si eso lo hacía enojar o no." },
+    { mauri: "normal" },
+    { quien: "mauri", texto: "...bueno." },
+    { quien: "mauri", texto: "Pero después me decís si tenía razón." },
+    { esperar: 500 },
+    { texto: "Y volvió a leer, pero esta vez más rápido." },
+    { texto: "De reojo lo vi levantar la vista dos veces para ver si yo seguía ahí." },
+    { ir: "fin_recreo" },
+  ],
+
+  mauri_nada: [
+    { texto: "Lo dejé tranquilo." },
+    { texto: "Es lo que a mí me gustaría que hicieran conmigo, así que me pareció lo correcto." },
+    { esperar: 600 },
+    { mauri: "normal", donde: "derecha" },
+    { texto: "Terminó el recreo y no cruzamos una palabra." },
+    { esperar: 400 },
+    { texto: "Y recién cuando nos levantamos me di cuenta de una cosa incómoda." },
+    { texto: "Que a mí me gustaría que me dejaran tranquilo, sí." },
+    { texto: "Pero esta mañana alguien no me dejó tranquilo en el andén, y por eso estoy sentado en esta mesa." },
+    { ir: "fin_recreo" },
+  ],
+
+  /* ---------- Se termina el recreo ---------- */
+  fin_recreo: [
+    { mauri: null },
+    { esperar: 500 },
+    { texto: "El timbre de la cafetería no es el mismo que el de las aulas. Es más corto, casi educado." },
+    { texto: "Se levantaron todos juntos otra vez." },
+    { esperar: 400 },
+    { texto: "Esta vez me levanté con ellos." },
+    { esperar: 600 },
+
+    /* Cómo te va yendo con cada uno, sin decir ningún número. */
+    { siAfinidad: "alvaro", min: 2, alvaro: "orgulloso", donde: "izquierda" },
+    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "Mañana te sentás acá de una, ¿estamos?" },
+    { siAfinidad: "alvaro", min: 2, quien: "yo", texto: "...estamos." },
+    { siAfinidad: "alvaro", min: 2, alvaro: null },
+    { siAfinidad: "alvaro", max: -1, texto: "Álvaro salió primero y no esperó a nadie. No hacía falta que dijera nada." },
+
+    { siAfinidad: "pato", min: 2, pato: "normal", donde: "izquierda" },
+    { siAfinidad: "pato", min: 2, texto: "Pato me pasó el teléfono con la foto de la planta abierta en la pantalla, sin decir nada, y esperó." },
+    { siAfinidad: "pato", min: 2, quien: "yo", texto: "Esa es la buena." },
+    { siAfinidad: "pato", min: 2, quien: "pato", texto: "Ya sé." },
+    { siAfinidad: "pato", min: 2, pato: null },
+
+    { siAfinidad: "iara", min: 2, iara: "normal", donde: "derecha" },
+    { siAfinidad: "iara", min: 2, quien: "iara", texto: "Ey. Cuando termines el catorce me avisás." },
+    { siAfinidad: "iara", min: 2, quien: "yo", texto: "No empecé el catorce." },
+    { siAfinidad: "iara", min: 2, quien: "iara", texto: "Empezalo." },
+    { siAfinidad: "iara", min: 2, iara: null },
+    { siAfinidad: "iara", max: -1, texto: "Iara se fue con los auriculares puestos. Ni me miró." },
+    { siAfinidad: "iara", max: -1, texto: "Y lo peor no era eso. Lo peor era saber exactamente por qué." },
+
+    { siAfinidad: "mauri", min: 2, mauri: "normal", donde: "derecha" },
+    { siAfinidad: "mauri", min: 2, quien: "mauri", texto: "Che, {nombre}." },
+    { siAfinidad: "mauri", min: 2, quien: "mauri", texto: "Era la parte del hermano, ¿no?" },
+    { siAfinidad: "mauri", min: 2, quien: "yo", texto: "Terminá el tomo, Mauri." },
+    { siAfinidad: "mauri", min: 2, mauri: null },
+    { esperar: 700 },
+
+    { fondo: "patio-colegio" },
+    { texto: "Cruzamos el patio en fila para el lado de las escaleras." },
+    { esperar: 400 },
+
+    { si: "aceptaste_invitacion", aiko: "normal-feliz", donde: "derecha" },
+    { si: "aceptaste_invitacion", quien: "aiko", texto: "No te olvides de mañana." },
+    { si: "aceptaste_invitacion", quien: "yo", texto: "No me voy a olvidar." },
+    { si: "aceptaste_invitacion", texto: "Y era verdad. Iba a estar contando las horas, que es lo mío." },
+
+    { si: "rechazaste_invitacion", aiko: "pensando-feliz", donde: "derecha" },
+    { si: "rechazaste_invitacion", quien: "aiko", texto: "Che." },
+    { si: "rechazaste_invitacion", quien: "aiko", texto: "Lo de recién en la mesa, cuando no dijiste nada." },
+    { si: "rechazaste_invitacion", quien: "yo", texto: "¿Qué?" },
+    { si: "rechazaste_invitacion", quien: "aiko", texto: "Nada. Después te digo." },
+    { si: "rechazaste_invitacion", texto: "Me robó la frase. Y encima le quedaba mejor que a mí." },
+    { esperar: 600 },
+
+    { aiko: null },
+    { texto: "Subimos las escaleras." },
+    { texto: "Y en el descanso del primer piso hice la cuenta, porque no puedo evitarlo." },
+    { esperar: 500 },
+    { texto: "Doce horas atrás estaba mirando el techo de mi cuarto pensando que hoy iba a ser exactamente igual a ayer." },
+    { esperar: 700 },
+    { texto: "Me equivoqué por bastante." },
     { ir: "por_escribir" },
   ],
 
   /* ---------- Hasta acá está escrito ---------- */
   por_escribir: [
     { esperar: 800 },
-    { fondo: "patio" },
+    { fondo: "amanecer" },
     { esperar: 600 },
     { texto: "CONTINUARÁ" },
+
     { si: "aceptaste_invitacion",  texto: "Mañana vas a la casa de Aiko." },
     { si: "rechazaste_invitacion", texto: "Mañana la ves en el recreo largo. Ella insistió; vos todavía no dijiste nada." },
-    { texto: "Seguí escribiendo desde acá en js/historia.js." },
+
+    /* Cómo quedó la cosa con cada uno, sin decir ningún número. */
+    { siAfinidad: "alvaro", min: 2, texto: "Álvaro te guardó un lugar en el cantero." },
+    { siAfinidad: "alvaro", max: -1, texto: "Con Álvaro empezaste torcido." },
+    { siAfinidad: "pato",   min: 2, texto: "Pato te mostró una foto. Eso, en él, es mucho." },
+    { siAfinidad: "iara",   min: 2, texto: "Iara te dejó tarea: el tomo catorce." },
+    { siAfinidad: "iara",   max: -1, texto: "Iara se dio cuenta de que le mentiste. No lo dijo, pero se dio cuenta." },
+    { siAfinidad: "mauri",  min: 2, texto: "Mauri te va a buscar mañana para preguntarte por el final." },
+    { siAfinidad: "mauri",  max: 0,  texto: "Mauri sigue esperando que alguien se le acerque." },
+
+    { texto: "Seguí escribiendo desde acá en js/historia.js.\n\nMirá RELACIONES.md para la afinidad." },
     { fin: true },
   ],
 };

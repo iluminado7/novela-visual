@@ -312,17 +312,18 @@ Guardar / Cargar.
 > El validador te avisa si consultás una bandera que nunca anotaste en ningún
 > lado — o sea, si te equivocaste escribiendo el nombre.
 
-### Un truco: contar cosas
+### Para relaciones, usá afinidad y no banderas
 
-Como las banderas son sí/no, para llevar la cuenta de algo usá varias:
+Las banderas son sí/no. Para llevar la cuenta de cuánto se acercó el jugador a
+un personaje está el sistema de afinidad:
 
 ```js
-{ recordar: "abriste_1" },      // primera vez que se abre
-...
-{ recordar: "abriste_2" },      // segunda
-...
-{ si: "abriste_2", texto: "Era la segunda vez que le contaba algo así." },
+{ afinidad: { alvaro: 1 } },                                   // sube
+{ siAfinidad: "alvaro", min: 3, texto: "Me hizo lugar." },     // consulta
 ```
+
+Está explicado entero, con la tabla de qué le gusta y qué le molesta a cada
+personaje, en **[RELACIONES.md](RELACIONES.md)**.
 
 ---
 
