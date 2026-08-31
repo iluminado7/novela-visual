@@ -1849,7 +1849,7 @@ const HISTORIA = {
     { esperar: 400 },
 
     { sora: "feliz", donde: "izquierda" },
-    { texto: "Apareció en el pasillo en menos de tres segundos, descalzo y con la remera al revés." },
+    { texto: "Apareció en el pasillo en menos de tres segundos, todavia con su uniforme escolar" },
     { quien: "sora", texto: "¡Y ES UN VARÓN!" },
     { quien: "aiko", texto: "ES UN COMPAÑERO DE LA ESCUELA." },
     { sora: "orgulloso" },
@@ -2082,7 +2082,7 @@ const HISTORIA = {
     { si: "le_mentiste_a_aiko", texto: "Te preguntó en serio por qué te sentás solo y le contestaste con una frase gastada." },
     { si: "llevaste_facturas", texto: "En esa casa, por ahora, sos el que trajo las facturas." },
 
-    { texto: "Seguí escribiendo desde acá en js/historia.js.\n\nMirá RELACIONES.md para la afinidad." },
+    { texto: "Si estas leyendo esto, te aviso que todavia estoy trabajando en el juego, no seas impaciente." },
     { fin: true },
   ],
 
