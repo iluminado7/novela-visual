@@ -36,6 +36,19 @@ ATUENDOS = {
                                "Saya_TSchoolUni1", "Saya_TSchoolShoes"],
     ("Angry",    "uniforme"): ["Saya_APanties", "Saya_ABra", "Saya_AStockings",
                                "Saya_ASchoolUni", "Saya_ASchoolShoes"],
+
+    # Fuera del colegio: vestido y zapatillas.
+    ("Idle",     "casual"):   ["Saya_IPanties", "Saya_IBra",
+                               "Saya_ICasualDress", "Saya_ICasualShoes"],
+    ("Thinking", "casual"):   ["Saya_TPanties", "Saya_TBra",
+                               "Saya_TCasualdress", "Saya_TCasualShoes"],
+    ("Angry",    "casual"):   ["Saya_APanties", "Saya_ABra",
+                               "Saya_ACasualDress", "Saya_ACasualShoes"],
+
+   #Ropa interior.   
+   ("Idle",     "pantie"):   ["Saya_IPanties", "Saya_IBra","Saya_AStockings"],    
+   ("Thinking", "pantie"):   ["Saya_TPanties", "Saya_TBra","Saya_AStockings"],                     
+   ("Angry", "pantie"):   ["Saya_TPanties", "Saya_TBra","Saya_AStockings"],                     
 }
 
 # Cuerpo base de cada pose (la variante que combina con el uniforme "1").
@@ -97,7 +110,10 @@ def main() -> None:
             ancho = round(final.width * ALTO_FINAL / final.height)
             final = final.resize((ancho, ALTO_FINAL), Image.LANCZOS)
 
-            salida = DESTINO / f"{POSE_CORTA[pose]}-{nombre_cara}.png"
+            # El uniforme no lleva prefijo, para no romper lo que ya usa
+            # historia.js. Los demas atuendos si: casual-normal-feliz, etc.
+            prefijo = "" if atuendo == "uniforme" else f"{atuendo}-"
+            salida = DESTINO / f"{prefijo}{POSE_CORTA[pose]}-{nombre_cara}.png"
             final.save(salida, optimize=True)
             kb = salida.stat().st_size // 1024
             print(f"  {salida.relative_to(RAIZ)}  ({final.width}x{final.height}, {kb} KB)")

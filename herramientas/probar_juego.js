@@ -205,6 +205,18 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
         ["Ana Lucia", [1, 1, 2, 2, 2, 1, 1]],
         // mezcla: le miente a Iara pero se acerca a Mauri
         ["Rocio",     [0, 1, 0, 1, 1, 1, 0]],
+        // el mejor camino posible con Aiko: acepta, le escribe, lleva facturas,
+        // le dice la verdad en el vagon y le respeta el espacio con el padre.
+        // Es la unica combinacion que llega a la escena del cuarto.
+        ["Nico",      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]],
+        // Afinidad media con Aiko y respetarle el espacio: tiene que saltear
+        // la escena del cuarto sin colgarse.
+        ["Vale",      [1, 0, 0, 0, 2, 1, 1, 1, 1, 2, 1]],
+        // Rechaza la invitacion y despues le sigue TODOS los coqueteos
+        // del recreo: es el mejor final posible de esa rama.
+        ["Juli",      [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]],
+        // Rechaza y se hace el boludo en los tres: la rama fria.
+        ["Bruno",     [0, 1, 0, 0, 0, 0, 0, 1, 1, 1]],
         // mezcla al revés: banca a Álvaro, ignora a Pato y a Mauri
         ["Tomi",      [1, 0, 1, 2, 0, 0, 1]],
         ["",          [0, 0, 0, 0, 0, 0, 0]]]) {
@@ -244,6 +256,11 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
     if (!texto.includes("¿Puedo ir a tu casa a terminarlo?"))
       errores.push("el acto no cierra con Aiko pidiendo ir a la casa");
 
+    if (n === "Nico") {
+      const af = (JSON.parse(almacen["novela-visual-save-auto"] || "{}").afinidad) || {};
+      if (!texto.includes("Veinte cent"))
+        errores.push("con afinidad alta y respetarle el espacio no se llego al cuarto");
+    }
     for (const sp of r.sprites)
       if (!fs.existsSync(path.join(RAIZ, sp))) errores.push(`sprite inexistente: ${sp}`);
 

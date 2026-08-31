@@ -40,8 +40,15 @@ for (const [nombre, pasos] of Object.entries(HISTORIA)) {
   pasos.forEach((p, i) => {
     const donde = `${nombre}[${i}]`;
 
-    if ("ir" in p)
+    if ("ir" in p) {
       ok(escenas.includes(p.ir), `${donde}: ir -> "${p.ir}" no existe`);
+      // Una escena que se manda a si misma vuelve a leer el mismo paso y
+      // salta otra vez: cuelga el navegador. Casi siempre es un copiar y
+      // pegar del nombre equivocado.
+      ok(p.ir !== nombre,
+         `${donde}: ir -> "${p.ir}" es la misma escena. Eso es un bucle infinito ` +
+         `y cuelga el juego.`);
+    }
     if ("fondo" in p && p.fondo != null)
       ok(FONDOS[p.fondo], `${donde}: fondo "${p.fondo}" no está en FONDOS`);
     if ("musica" in p && p.musica != null)
