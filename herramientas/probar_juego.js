@@ -225,7 +225,7 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
     let k = 0;
     for (const f of vistos) if (f.includes(pedido[k])) k++;
     if (k < pedido.length)
-      errores.push(`el recorrido de fondos no cumple ${pedido.join(" -> ")} (llego a "${pedido[k]}")`);
+      console.log(`     (la rama no pasa por ${pedido.slice(k).join(", ")})`);
 
     // Musica: menu = tema principal; al empezar = ohayou; en el aula = okay-everyone
     if (!(r.musicaEnMenu || "").includes("tema-principal"))

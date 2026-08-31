@@ -15,7 +15,11 @@ const fs = require("fs");
 const path = require("path");
 
 const RAIZ = path.resolve(__dirname, "..");
-const GUION = path.join(RAIZ, "js", "historia.js");
+// Por defecto revisa el guion del juego, pero se le puede pasar otro archivo:
+//     node herramientas/revisar_guion.js js/seguimiento.js
+const GUION = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : path.join(RAIZ, "js", "historia.js");
 
 const { HISTORIA, FONDOS, MUSICA, PERSONAJES } = new Function(
   fs.readFileSync(GUION, "utf8") +
