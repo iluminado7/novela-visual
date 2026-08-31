@@ -1632,7 +1632,7 @@ const HISTORIA = {
 
   panaderia_si: [
     { recordar: "llevaste_facturas" },
-    { afinidad: { aiko: 1 } },
+    { afinidad: { aiko: 3 } },
     { quien: "yo", texto: "Pará un segundo." },
     { esperar: 500 },
     { aiko: "pensando-feliz", donde: "derecha" },
@@ -1985,7 +1985,7 @@ const HISTORIA = {
   ],
 
   cuarto_respetar: [
-    { afinidad: { aiko: +2 } },
+    { afinidad: { aiko: 2 } },
     { aiko: "normal-triste", donde: "derecha" },
     { texto: "No pregunté nada." },
     { texto: "Que en mi caso es fácil, porque no preguntar es mi estado natural. Pero esta vez costó, y eso es nuevo." },
@@ -2166,7 +2166,7 @@ const HISTORIA = {
     { ir: "casa_aiko_final" },
   ],
   besar_aiko: [
-    { afinidad: { aiko: +5 } },
+    { afinidad: { aiko: 5 } },
       {texto: "Le hice caso a mi instinto, con la poca calma que me quedaba, cerre mis ojos y le di un piquito en los labios"},
       {aiko: "pensando-avergonzada"},
       {texto: "Ella se soprendio abriendo los ojos. Me rei, olvidandome de toda la tension"},
