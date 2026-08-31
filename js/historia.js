@@ -111,7 +111,12 @@ const PERSONAJES = {
   /* El hermano menor de Aiko. No tiene sprites: funciona igual, solo con voz. */
   sora: {
     nombre: "Sora", color: "#ffe08a", oculto: true,
-    perfil: "El hermano de Aiko, nueve años. Anuncia todo lo que pasa en la casa " +
+    carpeta: "assets/img/personajes/sora/",
+    poses: ["normal", "feliz", "pensando", "enojado", "triste", "orgulloso",
+            "sorprendido", "asustado", "timido", "cansado", "aburrido",
+            "confundido", "determinado"],
+    retrato: "feliz",
+    perfil: "El hermano de Aiko, once años. Anuncia todo lo que pasa en la casa " +
             "a un volumen que no admite discusión. No tiene filtro y no lo va a " +
             "tener nunca, y en el fondo eso es lo mejor que tiene.",
   },
@@ -204,7 +209,7 @@ const HISTORIA = {
 
   /* ---------- 1. AMANECER ---------- */
   inicio: [
-    { fondo: "habitacion-mc", musica: "ohayou" },
+    { fondo: "habitacion", musica: "ohayou" },
 
     { texto: "El despertador sonó a las seis y diez, como todos los días." },
     { texto: "Y como todos los días lo apagué antes del segundo pitido y me quedé mirando el techo un rato más." },
@@ -980,7 +985,7 @@ const HISTORIA = {
   ],
 
   alvaro_chiste_si: [
-    { afinidad: { alvaro: 1 } },
+    { afinidad: { alvaro: 2 } },
     { alvaro: "orgulloso", donde: "derecha" },
     { quien: "yo", texto: "Con un tenedor sucio, además." },
     { esperar: 400 },
@@ -993,7 +998,7 @@ const HISTORIA = {
   ],
 
   alvaro_bancar: [
-    { afinidad: { alvaro: 2 } },
+    { afinidad: { alvaro: 1 } },
     { texto: "La preceptora frenó y lo miró." },
     { alvaro: "triste", donde: "derecha" },
     { texto: "Álvaro recién ahí se dio cuenta. Se le fue la sonrisa de golpe." },
@@ -1552,7 +1557,7 @@ const HISTORIA = {
 
     /* Cómo te trata el grupo hoy depende de cómo te portaste ayer. */
     { siAfinidad: "alvaro", min: 2, alvaro: "orgulloso", donde: "izquierda" },
-    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "¡Acá! Te guardé el lugar, tarado." },
+    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "¡Acá wachin! Te guardé el lugar." },
     { siAfinidad: "alvaro", min: 2, texto: "Tenía la mochila puesta en la silla de al lado desde antes de que yo entrara." },
     { siAfinidad: "alvaro", min: 2, alvaro: null },
     { siAfinidad: "alvaro", max: -1, texto: "Álvaro contó un chiste largo mirando para el otro lado, con esa precisión que tiene la gente para no mirarte." },
@@ -1612,7 +1617,7 @@ const HISTORIA = {
     { esperar: 500 },
     { texto: "Aiko pasó por adelante sin frenar y sin mirarla, hablando de otra cosa." },
     { esperar: 400 },
-    { texto: "Yo tenía mil doscientos pesos y once metros para decidir." },
+    { texto: "Yo tenía doce mil pesos y once metros para decidir." },
 
     {
       opciones: [
@@ -1698,7 +1703,7 @@ const HISTORIA = {
     {
       opciones: [
         { texto: "Decirle la verdad", ir: "vagon_verdad" },
-        { texto: "Decirle que le gusta la tranquilidad", ir: "vagon_mentira" },
+        { texto: "Decirle que le gusta la tranquilidad (mentir)", ir: "vagon_mentira" },
         { texto: "Devolverle la pregunta", ir: "vagon_esquivar" },
       ]
     },
@@ -1824,7 +1829,7 @@ const HISTORIA = {
     { quien: "aiko", texto: "Che, dos cosas antes de entrar." },
     { quien: "yo", texto: "Bueno." },
     { quien: "aiko", texto: "Una: mi vieja va a preguntar mucho. No te asustes." },
-    { quien: "aiko", texto: "Dos: tengo un hermano de nueve años." },
+    { quien: "aiko", texto: "Dos: tengo un hermano de once años." },
     { esperar: 400 },
     { quien: "yo", texto: "¿Y eso qué implica?" },
     { aiko: "normal-feliz" },
@@ -1836,14 +1841,28 @@ const HISTORIA = {
     { esperar: 500 },
     { quien: "sora", texto: "¡MAMÁ, TRAJO A ALGUIEN!" },
     { esperar: 400 },
-    { texto: "Una voz desde el fondo de la casa. Aguda, enorme, con una capacidad de proyección que no le conocía a un chico de nueve años." },
+    { texto: "Una voz desde el fondo de la casa. Enorme, con una capacidad de proyección que no le conocía a un pibe de once años." },
     { esperar: 500 },
 
     { aiko: "normal-enojada", donde: "derecha" },
     { quien: "aiko", texto: "SORA TE JURO." },
-    { quien: "sora", texto: "¡ES UN VARÓN!" },
+    { esperar: 400 },
+
+    { sora: "feliz", donde: "izquierda" },
+    { texto: "Apareció en el pasillo en menos de tres segundos, descalzo y con la remera al revés." },
+    { quien: "sora", texto: "¡Y ES UN VARÓN!" },
     { quien: "aiko", texto: "ES UN COMPAÑERO DE LA ESCUELA." },
+    { sora: "orgulloso" },
     { quien: "sora", texto: "¡ES UN VARÓN COMPAÑERO DE LA ESCUELA!" },
+    { esperar: 400 },
+    { texto: "Lo dijo con una precisión que no era inocente." },
+    { texto: "A los once ya no se dicen las cosas sin querer. Se dicen sabiendo perfectamente lo que hacen." },
+    { esperar: 500 },
+
+    { sora: "timido" },
+    { texto: "Me miró de arriba a abajo, evaluándome, y se metió para adentro sin decir nada más." },
+    { texto: "Ni idea si aprobé." },
+    { sora: null },
     { esperar: 700 },
 
     { aiko: "pensando-avergonzada" },
@@ -1859,7 +1878,9 @@ const HISTORIA = {
     { si: "llevaste_facturas", aiko: "normal-feliz" },
     { si: "llevaste_facturas", texto: "Levantó la bolsa de la panadería como si fuera un trofeo y la mandó para adentro sin mirar." },
     { si: "llevaste_facturas", quien: "aiko", texto: "SORA. FACTURAS. TRAJO ÉL." },
+    { si: "llevaste_facturas", sora: "determinado", donde: "izquierda" },
     { si: "llevaste_facturas", quien: "sora", texto: "¡ME CAE BIEN!" },
+    { si: "llevaste_facturas", sora: null },
     { si: "llevaste_facturas", texto: "Y así fue como en esta casa me aceptaron antes de verme la cara." },
 
     { sino: "llevaste_facturas", texto: "Su mamá salió de la cocina, me dio la mano, me preguntó el nombre, de dónde era, en qué andaba mi familia y si había comido." },

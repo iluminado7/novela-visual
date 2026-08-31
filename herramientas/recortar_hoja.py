@@ -62,6 +62,9 @@ PERSONAJES = RAIZ / "assets" / "img" / "personajes"
 #             bordes suaves y no se pierden globitos ni destellos.
 #   detectar: True encuentra las figuras solas, en vez de cortar la hoja en
 #             partes iguales. Sirve cuando estan pegadas o mal espaciadas.
+#   grilla  : True para hojas en varias filas. Encuentra las figuras fila por
+#             fila y las nombra en orden de lectura. Cada fila puede tener
+#             distinta cantidad de poses. Necesita "croma".
 #   pasadas : (opcional) reemplaza PASADAS. En hojas chicas conviene bajar los
 #             grosores, si no se comen el detalle.
 # --------------------------------------------------------------------------
@@ -113,6 +116,16 @@ HOJAS = [
         # Su campera y su pelo dejan huecos mas grandes que los de Franco: con
         # las pasadas de siempre se le escapaba una pierna en tres poses.
         "pasadas": [(8, 5), (10, 7), (12, 9), (14, 11)],
+    },
+    {
+        # Sora viene en grilla: 6 poses arriba y 7 abajo, sobre verde.
+        "origen":  PERSONAJES / "sora" / "sora.png",
+        "destino": PERSONAJES / "sora",
+        "poses":   ["normal", "feliz", "pensando", "enojado", "triste", "orgulloso",
+                    "sorprendido", "asustado", "timido", "cansado", "aburrido",
+                    "confundido", "determinado"],
+        "croma":   (0, 255, 0),
+        "grilla":  True,
     },
     {
         "origen":  PERSONAJES / "chibis" / "franco-chibbi.png",
@@ -235,6 +248,41 @@ def limpiar_sueltos(sprite):
     b = a.copy()
     b[:, :, 3] = np.where(limpia, a[:, :, 3], 0)
     return Image.fromarray(b, "RGBA")
+
+
+def _bandas(perfil, minimo, largo_minimo):
+    """Tramos seguidos del perfil que superan 'minimo'. Sirve para encontrar
+    las filas y las columnas donde hay dibujo."""
+    tramos, ini = [], None
+    for i, v in enumerate(perfil):
+        if v >= minimo and ini is None:
+            ini = i
+        elif v < minimo and ini is not None:
+            tramos.append((ini, i)); ini = None
+    if ini is not None:
+        tramos.append((ini, len(perfil)))
+    return [t for t in tramos if t[1] - t[0] >= largo_minimo]
+
+
+def celdas_de_grilla(mascara):
+    """Encuentra las figuras de una hoja en varias filas y las devuelve en
+    orden de lectura: primero la fila de arriba de izquierda a derecha,
+    después la siguiente.
+
+    Sirve para hojas tipo grilla, donde cada fila puede tener distinta
+    cantidad de poses. Las franjas finitas (los títulos de cada pose) se
+    descartan solas por ser mucho más bajas que una figura.
+    """
+    h, w = mascara.shape
+    filas = [f for f in _bandas(mascara.sum(axis=1), w * 0.01, 8)
+             if f[1] - f[0] > h * 0.20]
+
+    celdas = []
+    for y0, y1 in filas:
+        alto = y1 - y0
+        for x0, x1 in _bandas(mascara[y0:y1].sum(axis=0), alto * 0.02, 20):
+            celdas.append((x0, y0, x1, y1))
+    return celdas
 
 
 def _rellenar_desde_borde(muro):
@@ -450,6 +498,23 @@ def procesar(hoja):
     hojita = img.crop((0, recorte, W, H))
     n = len(poses)
     croma = hoja.get("croma")
+
+    # ---- modo grilla: varias filas, cada una con su cantidad de poses ----
+    if hoja.get("grilla"):
+        if not croma:
+            print("  ! el modo grilla necesita \"croma\". Lo salteo.")
+            return 0
+        limpia = quitar_croma(hojita, croma)
+        celdas = celdas_de_grilla(np.asarray(limpia)[:, :, 3] > 128)
+        print(f"  encontre {len(celdas)} figuras en la grilla")
+        if len(celdas) != n:
+            print(f"  ! me diste {n} nombres: {', '.join(poses)}")
+            if len(celdas) < n:
+                return 0
+        return sum(guardar(limpia.crop(c), nombre)
+                   for c, nombre in zip(celdas, poses))
+
+
 
     if croma:
         # Con fondo croma alcanza con mirar el color: no hace falta nada de
