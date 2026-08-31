@@ -2356,7 +2356,7 @@ const HISTORIA = {
 
     /* Cómo te trata el grupo hoy depende de cómo te portaste ayer. */
     { siAfinidad: "alvaro", min: 2, alvaro: "orgulloso", donde: "izquierda" },
-    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "¡Eh! ¿Vos no ibas a la casa de Aiko ayer?" },
+    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "¡Eh! ¿Vos no ibas a ir a la casa de Aiko?" },
     { siAfinidad: "alvaro", min: 2, quien: "yo", texto: "No fui." },
     { siAfinidad: "alvaro", min: 2, alvaro: "pensando" },
     { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "..." },
@@ -2481,8 +2481,9 @@ const HISTORIA = {
 
     {
       opciones: [
-        { texto: "\"No, no era verdad.\"",              ir: "d2r_c2_seguir" },
-        { texto: "\"Tenía cosas que hacer, posta.\"",   ir: "d2r_c2_esquivar" },
+        { texto: "No, no era verdad.",              ir: "d2r_c2_seguir" },
+        { texto: "Por que te importa tanto que vaya a tu casa?",              ir: "d2r_c2_responder" },
+        { texto: "Tenía cosas que hacer, posta.",   ir: "d2r_c2_esquivar" },
       ]
     },
   ],
@@ -2525,6 +2526,24 @@ const HISTORIA = {
     { texto: "Y no insistió, que fue exactamente lo que pedí y exactamente lo que no quería." },
     { esperar: 500 },
     { texto: "Ese combo lo vengo consiguiendo bastante seguido." },
+    { ir: "d2r_coqueteo3" },
+  ],
+  d2r_c2_responder: [
+    {afinidad: {aiko: 2}},
+    { quien: "yo", texto: "Por que te importa tanto que vaya a tu casa?" },
+    { esperar: 900 },
+    { texto: "Y me escuché decirlo con una voz diferente a la usual, una mas segura y confiada." },
+    { texto: "No suelo ser asi, pero esta chica me saca." },
+    { esperar: 600 },
+
+    { aiko: "pensando-avergonzada" },
+    { quien: "aiko", texto: "No me importa, bobo. Solo pregunto, porque te conozco" },
+    { quien: "yo", texto: "¿Hablamos recien hace un dia y ya me conoces? Que rapido..." },
+    { quien: "aiko", texto: "Ay, no es eso pelotudo..."},
+    { quien: "yo", texto: "¿Y entonces?"},
+    { quien: "yo", texto: "*suspiro* sos un tarado"},
+    { esperar: 500 },
+    { texto: "Si mi vista no me falla afirmaria que la cara de la morocha se puso un poco colorada" },
     { ir: "d2r_coqueteo3" },
   ],
 
@@ -2595,8 +2614,8 @@ const HISTORIA = {
     { aiko: "normal-feliz" },
     { quien: "aiko", texto: "Depende de cómo te portes el resto del recreo." },
     { esperar: 400 },
-    { quien: "yo", texto: "Me quedan diez minutos para portarme bien." },
-    { quien: "aiko", texto: "Y una conclusión sin escribir. Empezá por ahí." },
+    { quien: "yo", texto: "Me quedan diez minutos para portarme bien, y si el resto del dia..." },
+    { quien: "aiko", texto: "Bueno, si queres... todavia el final del trabajo esta sin escribir. Empezá por ahí." },
     { esperar: 700 },
     { texto: "Escribí la conclusión en cuatro minutos." },
     { texto: "Es lo más rápido que hice algo en mi vida y no tengo intención de analizar por qué." },
