@@ -2177,7 +2177,7 @@ const HISTORIA = {
 
       {texto: "No se en que momento accedi y me deje llevar por la situacion"},
       { texto: "Puse mi mano en si cintura, la acerque mas... ella se acomodo en mi regazo"},
-      { texto: "Baje mis labios por inecria a al altura de su cuello"},
+      { texto: "Baje mis labios por inercia a al altura de su cuello"},
       { texto: "Ella dejo escapar un gemido... lo que me termino provocando mas"},
       { texto: "Mis manos estaban temblorosas"},
       {texto: "Ya no se si por la emocion o la verguenza (sinceramente no me importa)"},
