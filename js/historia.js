@@ -23,13 +23,13 @@ const PERSONAJES = {
   narrador: { nombre: "",   color: "#cfd6e6" },
   yo: {
     nombre: "Yo",              // en la partida lo reemplaza el nombre del jugador
-    nombreFicha: "Vos",        // como aparece en el panel "Personajes"
+    nombreFicha: "El MC",        // como aparece en el panel "Personajes"
     color: "#9ad0ff",
     perfil: "Contás los minutos de todo: los once hasta la estación, los " +
             "segundos que tarda alguien en contestarte, las excusas que te " +
             "inventás. Salís cuarenta minutos antes y te sentás donde nadie " +
             "te hable, y te repetís que es porque a esta hora no hay que " +
-            "hablar con nadie. Te lo repetís bastante seguido.",
+            "hablar con nadie. Sos un marginado social que busca adaptarse, en pocas palabras.",
   },
 
   aiko: {
@@ -171,6 +171,9 @@ const MUSICA = {
   tema:    "assets/audio/tema-principal.mp3",   // suena en el menú
   ohayou:  "assets/audio/ohayou.mp3",           // la mañana, hasta el aula
   alegre:  "assets/audio/okay-everyone.mp3",    // del aula en adelante
+  escuela: "assets/audio/escuela.mp3",          // los recreos
+  confesion: "assets/audio/confesion.mp3",      // momentos íntimos
+  still_love_you: "assets/audio/still-love-you.mp3"
 };
 
 /* --- 3) EL GUION ------------------------------------------------
@@ -269,6 +272,7 @@ const HISTORIA = {
 
   /* ---------- 2a. Le hablás ---------- */
   subte_hablar: [
+    { afinidad: {aiko: 1}},
     { recordar: "hablaste" },
     { texto: "Abrí la boca antes de tener pensado qué decir. Un clásico." },
     { quien: "yo", texto: "Eh... buenas." },
@@ -356,6 +360,7 @@ const HISTORIA = {
 
   /* ---------- 2b. Seguís de largo ---------- */
   subte_de_largo: [
+    { afinidad: {aiko: -1}},
     { texto: "No dije nada." },
     { texto: "Bajé un poco más la cabeza y caminé hasta el otro extremo del andén, como si mi lugar fuera ese desde siempre." },
     { esperar: 500 },
@@ -946,7 +951,7 @@ const HISTORIA = {
 
   /* ---------- El patio ---------- */
   recreo_patio: [
-    { fondo: "patio-colegio" },
+    { fondo: "patio-colegio", musica: "escuela" },
     { texto: "El patio a las once y veinte es otra cosa que a las siete y cuarto." },
     { texto: "El sol pega de frente contra el edificio y rebota, así que todo el mundo termina apiñado en la sombra de los dos árboles." },
     { esperar: 500 },
@@ -1022,7 +1027,7 @@ const HISTORIA = {
 
   alvaro_pesado: [
     { afinidad: { alvaro: -2 } },
-    { quien: "yo", texto: "Sos medio pesado, ¿sabías?" },
+    { quien: "yo", texto: "Sos medio plaga , ¿sabías?" },
     { esperar: 700 },
     { texto: "Salió más seco de lo que lo pensé." },
     { alvaro: "triste", donde: "derecha" },
@@ -1674,7 +1679,8 @@ const HISTORIA = {
 
   /* ---------- 4. El vagón, en sentido contrario ---------- */
   dia2_vagon: [
-    { fondo: "vagon-subte" },
+    { musica: "still_love_you"},
+    { fondo: "vagon-subte"},
     { esperar: 500 },
     { texto: "El subte de las tres y media va vacío para este lado." },
     { texto: "Nos sentamos en el banco largo del fondo, contra la ventanilla, y no había nadie más en medio vagón." },
@@ -1797,7 +1803,7 @@ const HISTORIA = {
   /* ---------- 5. Zavaleta ---------- */
   zavaleta: [
     { aiko: null },
-    { fondo: "camino-al-subte" },
+    { fondo: "camino-al-subte", musica: "alegre" },
     { esperar: 600 },
     { texto: "Zavaleta a las cuatro de la tarde es otra ciudad." },
     { texto: "Casas bajas, un kiosco con la persiana a medio subir, dos pibes pateando contra una pared que ya tiene la mancha marcada." },
@@ -1934,6 +1940,7 @@ const HISTORIA = {
     { aiko: "pensando-avergonzada" },
     { texto: "Miré el estante para tener algo que mirar." },
     { texto: "Y en la punta, al lado de los tomos, había un portarretratos apoyado boca abajo." },
+    { musica: "confesion"},
     { esperar: 500 },
     { texto: "Boca abajo no es un accidente. Boca abajo lo puso alguien." },
     { esperar: 700 },
@@ -2017,6 +2024,7 @@ const HISTORIA = {
      se saltea la escena entera y va derecho a la despedida. */
   casa_aiko_cuarto_final: [
     { siAfinidad: "aiko", max: 6, ir: "casa_aiko_final" },
+    { musica: "confesion"},
     { recordar: "d2_casi" },
 
     { aiko: "normal-feliz", donde: "derecha" },
@@ -2166,6 +2174,7 @@ const HISTORIA = {
     { ir: "casa_aiko_final" },
   ],
   besar_aiko: [
+    { recordar: "besaste_a_aiko" },
     { afinidad: { aiko: 5 } },
       { texto: "Le hice caso al poco instinto que me quedaba. Cerré los ojos y le di un piquito casi torpe en los labios." },
       { aiko: "pensando-avergonzada" },
@@ -2239,6 +2248,7 @@ const HISTORIA = {
 
   /* ---------- 8. La puerta, otra vez ---------- */
   casa_aiko_final: [
+    { musica: "alegre"},
     { fondo: "sala-aiko" },
     { esperar: 600 },
     { texto: "Me acompañó hasta la reja verde." },
@@ -2377,7 +2387,7 @@ const HISTORIA = {
   /* ---------- 3. El recreo largo ---------- */
   d2r_recreo: [
     { recordar: "d2r_trabajo_en_el_recreo" },
-    { fondo: "cafeteria" },
+    { fondo: "cafeteria", musica: "escuela" },
     { esperar: 600 },
 
     { texto: "La cafetería en el recreo largo es un ruido con paredes." },
@@ -2710,8 +2720,949 @@ const HISTORIA = {
     { si: "llevaste_facturas", texto: "En esa casa, por ahora, sos el que trajo las facturas." },
     { si: "d2r_trabajo_en_el_recreo", texto: "El trabajo lo terminaron en la cafetería, en cincuenta minutos.\n\nNo buscaste una excusa para irte ni una vez." },
 
-    { texto: "Si estas leyendo esto, te aviso que todavia estoy trabajando en el juego, no seas impaciente." },
+    { esperar: 600 },
+    { ir: "_mañana_dia_3" },
+  ],
+
+  /* =========================================================
+     DÍA 3 — EL DÍA SIN EXCUSA
+     Una sola columna para las seis combinaciones posibles. Lo que cambia
+     es el color: de dónde venís (casa o recreo) y cómo estás con ella.
+     ========================================================= */
+
+  /* =========================================================
+     DÍA 3 — EL DÍA SIN EXCUSA
+     ========================================================= */
+
+  /* ---------- 1. La mañana ---------- */
+  _mañana_dia_3: [
+    { musica: "ohayou" },
+    { fondo: "habitacion" },
+    { texto: "Me desperte como cualquier otro dia..." },
+    { si: "besaste_a_aiko", texto: "A quien quiero chamuyar. Desde lo de ayer me fue imposible dormir." },
+    { si: "besaste_a_aiko", texto: "Mi corazon se acelera cada vez que recuerdo la escena" },
+    { sino: "besaste_a_aiko", texto: "El pensar en Aiko y que estuve charlando tanto tiempo con una compañera." },
+    { sino: "besaste_a_aiko", texto: "Si, debe ser lo mas normal del mundo" },
+    { texto: "Para mi, significa un paso muy grande" },
+    { si: "besaste_a_aiko", texto: "¡Uno gigante!" },
+    { esperar: 500 },
+
+    { fondo: "camino-al-subte" },
+    { texto: "Por lo genelar mi camino como pueden ver siempre es tranquilo. Lo lindo de este barrio es su seguridad." },
+    { texto: "Bueno... hasta que en una mañana donde hay mas neblina que en Silent Hill, te topas con la inseguridad en vida propia" },
+    { texto: "Vi una figura alta y oscura acercarse a mi..." },
+    { texto: "No tenia puestos los lentes, mi asigmatismo no me dejaba ver bien de quien se trataba" },
+    { texto: "Justo cuando estaba a punto de sacar mi celular levantando las manos, pude enfocar bien" },
+    { franco: "orgulloso", donde: "derecha"},
+    { quien: "franco", texto: "Buen dia mi rey.."},
+    { quien: "franco", texto: "¿Estas bien? Parece que viste a Slenderman"},
+    { texto: "Si... mas o menos" },
+    { quien: "yo", texto: "Jueputa no te acerques mas asi. Pense que era pollo."},
+    { franco: "normal"},
+    { quien: "franco", texto: "Sos re putito. Vivis hace mucho aca, sabes que no hay inseguridad en estos lares."},
+    { quien: "franco", texto: "A parte, sabes que yo no voy a dejar que te pase nada."},
+    { quien: "yo", texto: "Eh? Que sos Bruce Lee pelotudo?"},
+    { franco: "orgulloso"},
+    { quien: "franco", texto: "No lo digo por eso, bobina"},
+    { quien: "franco", texto: "Sos mi compa, y por mas que no parezca te conozco bastante y me caes bien."},
+    { franco: "normal"},
+    { quien: "franco", texto: "No es como si yo fuera una especie de creador de tu existencia, o algo asi... \n\ (aunque en realidad si je)"},
+    { quien: "yo", texto: "Ok? Entonces que haces aca...?"},
+    { quien: "franco", texto: "Vivo a unas cuadras, solo que siempre tomo otro camino para ir a la escuela. Cuando Aiko me dijo que vos ibas por aca, supe que era una oportunidad de conocerte."},
+    { texto: "Ok, tengo al grandote de mi lado... No se que tan bueno sea viniendo de el en especifico pero ya fue."},
+    { texto: "Si ya estas en el baile, agarra lo que venga"},
+    { franco: "orgulloso"},
+    { quien: "franco", texto: "Mira como te cambio la carita."},
+    { quien: "franco", texto: "Bueno, vamos yendo pa. Que te pensas que puedo parar el tiempo para no llegar tarde? (aunque en realidad si puedo)"},
+    { texto: "Que tipo tan ansioso..."},
+    {esperar : 600},
+
+    { fondo: "subte" },
+    { franco: "normal"},
+    { quien: "franco", texto: "¿Y que onda con eso?"},
+    { quien: "yo", texto: "¿Con que?"},
+    { franco: "pensando"},
+    { quien: "franco", texto: "Con Aiko, bobo. No te hagas." },
+    { esperar: 500 },
+
+    { si: "aceptaste_invitacion",  quien: "franco", texto: "Fuiste a la casa. Le llevaste facturas. No me vengas con \"¿con qué?\"." },
+    { sino: "aceptaste_invitacion", quien: "franco", texto: "Se quedaron cincuenta minutos solos en la cafetería. Los conté, eh." },
+    { esperar: 400 },
+    { quien: "yo", texto: "Los contaste vos." },
+    { franco: "orgulloso" },
+    { quien: "franco", texto: "Los contaste vos también, no me mientas." },
+    { esperar: 700 },
+
+    { texto: "Tenía razón, obviamente. Cincuenta y dos, para ser exacto." },
+    { texto: "Pero eso no se lo dije porque uno tiene que conservar algo." },
+    { esperar: 600 },
+
+    { franco: "normal" },
+    { quien: "franco", texto: "Bueno, yo me tomo el otro. Combino en Once, tenog que comprar unas cosas." },
+    { quien: "yo", texto: "¿No ibas para el colegio?" },
+    { franco: "orgulloso" },
+    { quien: "franco", texto: "Sí, pero no me voy a colgar de tu viaje. Ese no es mi laburo hoy." },
+    { esperar: 500 },
+    { quien: "yo", texto: "¿Y cuál es tu laburo hoy?" },
+    { quien: "franco", texto: "Ya lo hice. Te saqué de la cama a la hora que te tenía que sacar." },
+    { esperar: 900 },
+
+    { texto: "Y se fue por el pasillo del andén levantando una mano por encima del hombro, sin darse vuelta." },
+    { esperar: 500 },
+    { texto: "Me quedé pensando en eso." },
+    { texto: "Que hay gente que se ocupa de uno sin avisar, y que uno se entera después, tarde y de casualidad." },
+    { franco: null },
+    { esperar: 700 },
+
+    { texto: "Miré el reloj." },
+    { texto: "Seis menos diez." },
+    { esperar: 500 },
+    { texto: "Ella cae siempre seis y cuarto." },
+    { esperar: 400 },
+    { texto: "Veinticinco minutos." },
+    { esperar: 700 },
+
+    { texto: "Veinticinco minutos parado solo en un andén, esperando a alguien." },
+    { texto: "Que es exactamente lo que juré durante un año y medio que no iba a hacer nunca." },
+    { ir: "d3_anden" },
     { fin: true },
   ],
+
+  /* ---------- 2. El andén, del otro lado ---------- */
+  d3_anden: [
+    { fondo: "subte" },
+    { esperar: 500 },
+    { texto: "Me paré en la línea amarilla, tercer cartel." },
+    { texto: "El lugar donde me paré ochocientas veces mirando el piso, y donde hace dos días había alguien." },
+    { esperar: 700 },
+
+    { texto: "Hoy no había nadie." },
+    { texto: "Hoy el que estaba primero era yo." },
+    { esperar: 900 },
+
+    { texto: "Esperé dieciocho minutos." },
+    { texto: "Los conté de a uno, porque no tenía otra cosa que hacer y porque soy quien soy." },
+    { esperar: 500 },
+    { texto: "Pasaron dos trenes que no tomé." },
+    { texto: "Nunca en mi vida dejé pasar un tren." },
+    { esperar: 700 },
+
+    { texto: "Y en algún momento del minuto catorce me di cuenta de algo bastante incómodo." },
+    { texto: "Que si ella no aparecía, yo iba a haber estado dieciocho minutos parado en un andén por nada, y que eso me iba a doler." },
+    { esperar: 500 },
+    { texto: "Que es la definición exacta de lo que estuve evitando toda mi vida." },
+    { esperar: 900 },
+
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Apareció seis y ocho." },
+    { esperar: 400 },
+    { texto: "Siete minutos antes de su horario, que es un dato que registré y que no pienso soltar en toda mi vida." },
+    { esperar: 400 },
+    { texto: "Bajó las escaleras mirando el teléfono, levantó la vista, y frenó en seco a mitad del andén." },
+    { esperar: 700 },
+
+    /* Cómo te saluda depende de cómo vienen. */
+    { siAfinidad: "aiko", min: 7, aiko: "normal-feliz" },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "¡Ey!" },
+    { siAfinidad: "aiko", min: 7, texto: "Y vino directo, sin desviar, con esa cosa de la gente que no tiene que decidir si te saluda." },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "Buen día, {nombre}." },
+
+    { siAfinidad: "aiko", min: 3, max: 6, aiko: "normal-feliz" },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "aiko", texto: "Buen día." },
+    { siAfinidad: "aiko", min: 3, max: 6, texto: "Un buen día completo, de los que se dicen mirando a la cara." },
+    { siAfinidad: "aiko", min: 3, max: 6, texto: "A esta altura ya sé que eso no es poco viniendo de nadie." },
+
+    { siAfinidad: "aiko", max: 2, aiko: "normal-triste" },
+    { siAfinidad: "aiko", max: 2, quien: "aiko", texto: "Buenas." },
+    { siAfinidad: "aiko", max: 2, texto: "Buenas. Cuatro letras y una distancia de dos metros que antes no estaba." },
+    { esperar: 500 },
+
+    { aiko: "pensando-avergonzada" },
+    { quien: "aiko", texto: "...¿hace cuánto que estás acá?" },
+    { esperar: 900 },
+
+    {
+      opciones: [
+        { texto: "\"Dieciocho minutos.\"",        ir: "d3_anden_verdad" },
+        { texto: "\"Recién llego.\"",             ir: "d3_anden_excusa" },
+      ]
+    },
+  ],
+
+  d3_anden_verdad: [
+    { recordar: "d3_esperaste" },
+    { afinidad: { aiko: 2 } },
+    { quien: "yo", texto: "Dieciocho minutos." },
+    { esperar: 900 },
+
+    { texto: "Y no agregué nada, que en mi caso es una hazaña, porque lo natural habría sido explicarlo." },
+    { texto: "Inventar que me había levantado temprano por otra cosa. Que se me hizo temprano sin querer." },
+    { esperar: 500 },
+    { texto: "Tenía cuatro versiones preparadas y no usé ninguna." },
+    { esperar: 700 },
+
+    { aiko: "pensando-avergonzada" },
+    { texto: "Se quedó parada a tres metros con el teléfono todavía en la mano." },
+    { quien: "aiko", texto: "¿Dieciocho?" },
+    { quien: "yo", texto: "Dieciocho." },
+    { quien: "aiko", texto: "¿Y por qué no me escribiste?" },
+    { quien: "yo", texto: "Porque entonces no era esperarte. Era coordinar." },
+    { esperar: 900 },
+
+    { texto: "Ahí sí levantó la cabeza del todo." },
+    { esperar: 500 },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Sos un caso, {nombre}." },
+    { texto: "Y vino y se paró al lado mío en la línea amarilla, en el mismo cartel, y no dijo nada más hasta que entró el tren." },
+    { ir: "d3_vagon" },
+  ],
+
+  d3_anden_excusa: [
+    { quien: "yo", texto: "Recién llego." },
+    { esperar: 900 },
+
+    { texto: "Automático. Ni lo pensé." },
+    { texto: "Salió con la fluidez de las cosas que uno dice mil veces, que es la peor fluidez que existe." },
+    { esperar: 600 },
+
+    { aiko: "pensando-feliz" },
+    { texto: "Ella miró el cartel de los trenes." },
+    { texto: "El cartel que dice, en letras grandes y verdes, cuánto falta para el próximo y cuántos pasaron." },
+    { esperar: 500 },
+    { quien: "aiko", texto: "Ajá." },
+    { esperar: 700 },
+
+    { texto: "No dijo nada más. No hacía falta." },
+    { texto: "Se paró al lado mío igual, en el mismo cartel, y esperamos el tren." },
+    { esperar: 500 },
+    { texto: "Y yo me pasé las siete estaciones pensando en por qué mentí sobre algo que me hacía quedar bien." },
+    { texto: "No encontré la respuesta. Pero la sospecho, y la sospecha es peor." },
+    { ir: "d3_vagon" },
+  ],
+
+  /* ---------- 3. El vagón ---------- */
+  d3_vagon: [
+    { fondo: "vagon-subte" },
+    { esperar: 500 },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Nos sentamos en el fondo a la derecha." },
+    { texto: "Mi asiento. Que ya van tres días de ser los dos asientos." },
+    { esperar: 600 },
+
+    /* El clima del viaje depende de cómo venís con ella. */
+    { siAfinidad: "aiko", min: 7, aiko: "pensando-feliz" },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "Che." },
+    { siAfinidad: "aiko", min: 7, quien: "yo", texto: "Qué." },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "Nada. Me gusta que ya sé de qué lado te vas a sentar." },
+    { siAfinidad: "aiko", min: 7, esperar: 500 },
+    { siAfinidad: "aiko", min: 7, texto: "Eso lo dijo mirando la ventanilla, que es como dice ella las cosas que le cuestan." },
+    { siAfinidad: "aiko", min: 7, texto: "Ya le tengo detectado el movimiento. Hace tres días no le tenía detectado nada." },
+
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "aiko", texto: "¿Repasamos la conclusión antes de entregar?" },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "yo", texto: "Ya la repasamos dos veces." },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "aiko", texto: "Repasémosla tres." },
+    { siAfinidad: "aiko", min: 3, max: 6, esperar: 500 },
+    { siAfinidad: "aiko", min: 3, max: 6, texto: "La repasamos tres. No hacía falta y los dos lo sabíamos, pero era eso o quedarnos callados." },
+
+    { siAfinidad: "aiko", max: 2, aiko: "normal-triste" },
+    { siAfinidad: "aiko", max: 2, texto: "No hablamos en las siete estaciones." },
+    { siAfinidad: "aiko", max: 2, texto: "Ella con el teléfono, yo con el piso, cada uno en lo suyo como dos personas que se conocen de vista." },
+    { siAfinidad: "aiko", max: 2, esperar: 500 },
+    { siAfinidad: "aiko", max: 2, texto: "Que es lo que éramos hace tres días." },
+    { siAfinidad: "aiko", max: 2, texto: "Cuesta menos volver a eso de lo que uno pensaría." },
+    { esperar: 700 },
+
+    { aiko: null },
+    { texto: "Bajamos en la estación del colegio." },
+    { ir: "d3_formacion" },
+  ],
+
+  /* ---------- 3. La formación ---------- */
+  d3_formacion: [
+    { fondo: "patio", musica: "escuela" },
+    { esperar: 600 },
+    { texto: "Siete y veinticinco. Formación en el patio, que es esa costumbre de hacernos parar en filas diez minutos para decirnos dos cosas que podrían ir en un cartel." },
+    { esperar: 500 },
+
+    { texto: "Nuestra división se junta siempre en el mismo rincón, contra el mástil." },
+    { texto: "Yo llegaba, me paraba al final de la fila y esperaba. Ese era mi procedimiento completo." },
+    { esperar: 600 },
+    { texto: "Hoy había un problema nuevo: cinco personas que me conocen el nombre." },
+    { esperar: 700 },
+
+    /* Álvaro */
+    { alvaro: "orgulloso", donde: "izquierda" },
+    { siAfinidad: "alvaro", min: 2, quien: "alvaro", texto: "¡{nombre}! Acá, vení." },
+    { siAfinidad: "alvaro", min: 2, texto: "Me hizo lugar entre él y Pato con el hombro, sin preguntar." },
+    { siAfinidad: "alvaro", max: 1, quien: "alvaro", texto: "Buenas." },
+    { siAfinidad: "alvaro", max: 1, texto: "Un buenas correcto, de esos que cierran en vez de abrir." },
+    { esperar: 400 },
+
+    /* Pato */
+    { alvaro: null, pato: "normal", donde: "izquierda" },
+    { siAfinidad: "pato", min: 2, quien: "pato", texto: "Che." },
+    { siAfinidad: "pato", min: 2, quien: "pato", texto: "La luz de las siete y media en el mástil es la mejor del día y nadie la aprovecha." },
+    { siAfinidad: "pato", min: 2, quien: "yo", texto: "¿Y vos la aprovechás?" },
+    { siAfinidad: "pato", min: 2, pato: "orgulloso" },
+    { siAfinidad: "pato", min: 2, quien: "pato", texto: "Obvio que no. Estoy formando." },
+    { siAfinidad: "pato", max: 1, quien: "pato", texto: "..." },
+    { siAfinidad: "pato", max: 1, texto: "Levantó el mentón dos milímetros, que en el idioma de Pato es un saludo completo." },
+    { esperar: 400 },
+
+    /* Mauri */
+    { pato: null, mauri: "normal", donde: "izquierda" },
+    { siAfinidad: "mauri", min: 2, mauri: "orgulloso" },
+    { siAfinidad: "mauri", min: 2, quien: "mauri", texto: "Trece." },
+    { siAfinidad: "mauri", min: 2, quien: "yo", texto: "Trece." },
+    { siAfinidad: "mauri", min: 2, quien: "mauri", texto: "No digas nada. No digas NADA." },
+    { siAfinidad: "mauri", max: 1, quien: "mauri", texto: "Hola." },
+    { siAfinidad: "mauri", max: 1, texto: "Y volvió al teléfono, que es su forma de terminar una conversación antes de empezarla." },
+    { esperar: 400 },
+
+    /* Lucas */
+    { mauri: null, lucas: "triste", donde: "izquierda" },
+    { quien: "lucas", texto: "Buenas." },
+    { texto: "Lucas saluda igual siempre, con el mismo tono, tengas la relación que tengas con él." },
+    { texto: "Hay algo tranquilizador en eso." },
+    { esperar: 400 },
+
+    /* Iara */
+    { lucas: null, iara: "normal", donde: "izquierda" },
+    { siAfinidad: "iara", min: 2, iara: "pensando" },
+    { siAfinidad: "iara", min: 2, quien: "iara", texto: "¿Tomo?" },
+    { siAfinidad: "iara", min: 2, quien: "yo", texto: "Doce." },
+    { siAfinidad: "iara", min: 2, iara: "orgullosa" },
+    { siAfinidad: "iara", min: 2, quien: "iara", texto: "Vas bien. Sospechosamente bien." },
+    { siAfinidad: "iara", max: 1, quien: "iara", texto: "Buen día." },
+    { siAfinidad: "iara", max: 1, texto: "Correcta, breve, sin una sola grieta por donde meterse." },
+    { esperar: 500 },
+
+    { iara: null, aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Y Aiko al lado mío, en la fila, un lugar más adelante del que le tocaba." },
+    { esperar: 400 },
+    { quien: "aiko", texto: "¿Y Franco?" },
+    { quien: "yo", texto: "Se tomó el otro subte." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "O sea que llega tarde." },
+    { quien: "yo", texto: "O sea que llega tarde." },
+    { esperar: 500 },
+    { texto: "Franco llegó veinte minutos tarde. Pero eso es más adelante." },
+    { esperar: 700 },
+
+    { aiko: null },
+    { texto: "El director habló siete minutos sobre la importancia de la puntualidad." },
+    { texto: "Cuarenta y dos personas mirando el piso, incluido yo, que había llegado con veinticuatro minutos de anticipación." },
+    { ir: "d3_derecho" },
+  ],
+
+  /* ---------- 4. Derecho ---------- */
+  d3_derecho: [
+    { fondo: "aula", musica: "alegre" },
+    { esperar: 600 },
+    { texto: "Primeras dos horas: Derecho." },
+    { texto: "La profesora explicó la diferencia entre norma jurídica y norma moral con un ejemplo sobre un tipo que encuentra una billetera en la calle." },
+    { esperar: 500 },
+
+    { texto: "Que la ley te obliga a devolverla, dijo." },
+    { texto: "Y que si la devolvés solo porque te obliga, no estás siendo bueno. Estás siendo obediente." },
+    { esperar: 700 },
+
+    { texto: "Anoté eso, que no suelo anotar nada." },
+    { texto: "Me quedó dando vueltas por razones que en ese momento no supe explicarme y que ahora sospecho bastante bien." },
+    { esperar: 600 },
+
+    { aiko: "pensando-feliz", donde: "derecha" },
+    { texto: "Aiko se dio vuelta desde el banco de adelante." },
+    { quien: "aiko", texto: "¿Vos qué harías?" },
+    { quien: "yo", texto: "La devolvería." },
+    { quien: "aiko", texto: "¿Por la ley o por la otra?" },
+    { esperar: 900 },
+    { quien: "yo", texto: "Ni idea. Por eso lo anoté." },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Buena respuesta." },
+    { aiko: null },
+    { esperar: 700 },
+
+    { texto: "Timbre. Recreo." },
+    { ir: "d3_franco_aviso" },
+  ],
+
+  /* ---------- 5. Franco llega tarde y suelta la posta ---------- */
+  d3_franco_aviso: [
+    { fondo: "patio-colegio", musica: "escuela" },
+    { esperar: 600 },
+    { texto: "Salí al patio y me estaba yendo para el rincón de la sombra por pura inercia cuando me lo crucé de frente." },
+    { esperar: 400 },
+
+    { franco: "normal", donde: "derecha" },
+    { texto: "Franco. Recién llegando, con la mochila en un hombro y cara de haber corrido tres cuadras." },
+    { quien: "yo", texto: "Llegaste tarde." },
+    { franco: "orgulloso" },
+    { quien: "franco", texto: "Llegué cuando tenía que llegar." },
+    { quien: "yo", texto: "Eso no significa nada." },
+    { quien: "franco", texto: "Significa un montón. Vos no lo ves todavía." },
+    { esperar: 700 },
+
+    { texto: "Se puso al lado mío, mirando el patio, en esa posición de hombro con hombro que usa la gente para decir cosas serias sin tener que mirarse." },
+    { esperar: 500 },
+
+    { franco: "normal" },
+    { quien: "franco", texto: "Che. Te digo una y me callo." },
+    { quien: "yo", texto: "Dale." },
+    { esperar: 400 },
+    { quien: "franco", texto: "Vos con Aiko estás bien. Eso ya está en camino, no te preocupes." },
+    { quien: "franco", texto: "Pero hay cinco personas más que te bancaron el lunes sin conocerte, y a esas las tenés en pausa." },
+    { esperar: 900 },
+
+    { texto: "Iba a decirle que no tenía nada en pausa." },
+    { texto: "Después me acordé de que a Mauri no le pregunté por el trece, de que a Pato nunca le contesté la última foto, de que a Álvaro le dije que sí a la cancha y no confirmé." },
+    { esperar: 600 },
+    { texto: "Callado." },
+    { esperar: 500 },
+
+    { franco: "orgulloso" },
+    { quien: "franco", texto: "Los recreos son largos, chabón. Usalos." },
+    { quien: "franco", texto: "El que se sienta solo no es más profundo. Es solo alguien que se sienta solo." },
+    { esperar: 700 },
+    { quien: "yo", texto: "¿Eso lo sacaste de algún lado?" },
+    { franco: "normal" },
+    { quien: "franco", texto: "De vos. Es lo que decís vos con la cara." },
+    { esperar: 900 },
+
+    { texto: "Y se fue a fichar la llegada antes de que yo tuviera nada para contestarle." },
+    { franco: null },
+    { esperar: 600 },
+
+    { texto: "Me quedé parado en el medio del patio, que es un lugar donde nunca me quedo parado." },
+    { texto: "Cuarenta minutos de recreo." },
+    { esperar: 400 },
+    { texto: "Alcanza para dos personas, si uno no se cuelga." },
+    { ir: "d3_recreo_hub" },
+  ],
+
+  /* ---------- 6. El recreo: con quién lo pasás ---------- */
+  d3_recreo_hub: [
+    { fondo: "patio-colegio", musica: "escuela" },
+    { aiko: null, alvaro: null, pato: null, mauri: null, lucas: null, iara: null, franco: null },
+    { esperar: 400 },
+
+    { sino: "d3_recreo_turno2", texto: "Miré el patio entero, por primera vez, buscando a alguien a propósito." },
+    { si: "d3_recreo_turno2", texto: "Quedaba media vuelta de recreo." },
+    { esperar: 500 },
+
+    {
+      opciones: [
+        { texto: "Ir con Álvaro",       ir: "d3_con_alvaro", sino: "d3_vi_alvaro" },
+        { texto: "Ir con Pato",         ir: "d3_con_pato",   sino: "d3_vi_pato" },
+        { texto: "Ir con Mauri",        ir: "d3_con_mauri",  sino: "d3_vi_mauri" },
+        { texto: "Ir con Iara",         ir: "d3_con_iara",   sino: "d3_vi_iara" },
+        { texto: "Buscar a Aiko",       ir: "d3_con_aiko",   sino: "d3_vi_aiko" },
+      ]
+    },
+  ],
+
+  /* ---------- 6a. Álvaro ---------- */
+  d3_con_alvaro: [
+    { recordar: "d3_vi_alvaro" },
+    { afinidad: { alvaro: 1 } },
+    { alvaro: "orgulloso", donde: "derecha" },
+    { esperar: 500 },
+    { texto: "Estaba contra el paredón con media división alrededor, contando algo con las manos." },
+    { texto: "Me vio llegar y no cortó el chiste. Siguió, pero abrió el círculo con el pie para que entrara." },
+    { esperar: 600 },
+
+    { quien: "alvaro", texto: "...donde el leon pisa, los gatitos no dejan huella." },
+    { texto: "Se rieron seis personas. Yo entendí como la mitad porque me perdí el principio." },
+    { esperar: 400 },
+    { alvaro: "normal" },
+    { quien: "alvaro", texto: "Che, {nombre}, lo de la casa de Mauri el viernes." },
+    { quien: "yo", texto: "Sí." },
+    { quien: "alvaro", texto: "¿Sí sí o sí de compromiso?" },
+    { esperar: 900 },
+
+    { texto: "Y me di cuenta de que tenía las dos respuestas preparadas y que una de las dos era mentira." },
+    { esperar: 500 },
+    { quien: "yo", texto: "Sí sí." },
+    { alvaro: "orgulloso" },
+    { quien: "alvaro", texto: "¡ESE!" },
+    { texto: "Y me pegó en el hombro con una fuerza que claramente él considera afectuosa." },
+    { esperar: 600 },
+
+    { siAfinidad: "alvaro", min: 3, alvaro: "normal" },
+    { siAfinidad: "alvaro", min: 3, quien: "alvaro", texto: "Che, en serio." },
+    { siAfinidad: "alvaro", min: 3, quien: "alvaro", texto: "Vos cuando hablás decís cosas. La mayoría de los que están acá hablan y no dicen nada, yo el primero." },
+    { siAfinidad: "alvaro", min: 3, esperar: 500 },
+    { siAfinidad: "alvaro", min: 3, texto: "Aca la mayoria del curso son fekas, vos con nosotros podes ser transparente." },
+    { siAfinidad: "alvaro", min: 3, quien: "yo", texto: "Gracias." },
+    { siAfinidad: "alvaro", min: 3, alvaro: "orgulloso" },
+    { siAfinidad: "alvaro", min: 3, quien: "alvaro", texto: "Bueno, no te agrandes. ¡EH, PATO, VENÍ QUE ESTE SE ESTÁ EMOCIONANDO!" },
+    { esperar: 700 },
+
+    { alvaro: null },
+    { ir: "d3_recreo_volver" },
+  ],
+
+  /* ---------- 6b. Pato ---------- */
+  d3_con_pato: [
+    { recordar: "d3_vi_pato" },
+    { afinidad: { pato: 1 } },
+    { pato: "pensando", donde: "derecha" },
+    { esperar: 500 },
+    { texto: "Estaba solo, en cuclillas al lado del cantero, sacándole una foto a nada." },
+    { texto: "Me acerqué y me quedé parado atrás sin decir nada, que con Pato suele ser lo correcto." },
+    { esperar: 600 },
+
+    { quien: "pato", texto: "Son las hormigas." },
+    { quien: "yo", texto: "¿Qué hormigas?" },
+    { quien: "pato", texto: "Las que están haciendo el camino ese. Lo hacen todos los días igual y todos los días alguien lo pisa." },
+    { esperar: 500 },
+    { pato: "normal" },
+    { quien: "pato", texto: "Me parece un buen tema." },
+    { esperar: 700 },
+
+    { texto: "Miré el piso. Efectivamente había una fila de hormigas cruzando la baldosa." },
+    { texto: "Llevo dos años pasando por acá todos los días." },
+    { esperar: 500 },
+
+    { siAfinidad: "pato", min: 4, pato: "orgulloso" },
+    { siAfinidad: "pato", min: 4, quien: "pato", texto: "Tomá." },
+    { siAfinidad: "pato", min: 4, texto: "Me pasó el teléfono para que mirara la foto de cerca." },
+    { siAfinidad: "pato", min: 4, texto: "A Pato no le gusta que le toquen el teléfono. Lo sé porque se lo vi negar a tres personas esta semana." },
+    { siAfinidad: "pato", min: 4, esperar: 500 },
+    { siAfinidad: "pato", min: 4, quien: "yo", texto: "Está muy buena." },
+    { siAfinidad: "pato", min: 4, quien: "pato", texto: "Ya sé." },
+    { siAfinidad: "pato", min: 4, pato: "normal" },
+    { siAfinidad: "pato", min: 4, quien: "pato", texto: "Pero gracias." },
+
+    { siAfinidad: "pato", max: 3, quien: "pato", texto: "No te la voy a mostrar, todavía no está." },
+    { siAfinidad: "pato", max: 3, quien: "yo", texto: "Bueno." },
+    { siAfinidad: "pato", max: 3, pato: "normal" },
+    { siAfinidad: "pato", max: 3, quien: "pato", texto: "Pero está bien que hayas venido." },
+    { siAfinidad: "pato", max: 3, texto: "Y volvió a agacharse, que era la señal de que la conversación estaba terminada y de que había salido bien." },
+    { esperar: 700 },
+
+    { pato: null },
+    { ir: "d3_recreo_volver" },
+  ],
+
+  /* ---------- 6c. Mauri (y Lucas) ---------- */
+  d3_con_mauri: [
+    { recordar: "d3_vi_mauri" },
+    { afinidad: { mauri: 1 } },
+    { mauri: "normal", donde: "derecha" },
+    { esperar: 500 },
+    { texto: "Estaban los dos en el banco de siempre, contra la pared del fondo." },
+    { texto: "Mauri con el teléfono en la mano y la cara de alguien que necesita hablar de algo hace cuarenta minutos." },
+    { esperar: 600 },
+
+    { quien: "yo", texto: "El trece." },
+    { mauri: "orgulloso" },
+    { quien: "mauri", texto: "EL TRECE." },
+    { esperar: 400 },
+    { quien: "mauri", texto: "¿Vos lo leíste o me estás cargando?" },
+    { quien: "yo", texto: "Lo leí anoche." },
+    { esperar: 500 },
+
+    { mauri: null, lucas: "triste", donde: "centro" },
+    { quien: "lucas", texto: "No lo leíste anoche." },
+    { quien: "yo", texto: "Lo leí anoche." },
+    { quien: "lucas", texto: "Nadie lee un tomo entero un martes." },
+    { esperar: 400 },
+    { quien: "yo", texto: "Yo no duermo, Lucas." },
+    { lucas: "normal" },
+    { quien: "lucas", texto: "Ah." },
+    { esperar: 500 },
+    { quien: "lucas", texto: "Bueno, entonces sí." },
+    { texto: "Y eso, viniendo de él, es una credencial." },
+    { esperar: 700 },
+
+    { lucas: null, mauri: "orgulloso", donde: "derecha" },
+    { texto: "Mauri habló diecinueve minutos sin respirar." },
+    { texto: "Del trece, del doce, de una teoría sobre el capítulo cuatro que involucraba un pizarrón imaginario." },
+    { esperar: 500 },
+    { texto: "Yo dije como seis palabras en total, y todas fueron de acuerdo." },
+    { esperar: 400 },
+    { texto: "Al final me di cuenta de una cosa: no necesitaba que yo hablara." },
+    { texto: "Necesitaba que alguien se quedara." },
+    { esperar: 700 },
+
+    { siAfinidad: "mauri", min: 4, mauri: "pensando" },
+    { siAfinidad: "mauri", min: 4, quien: "mauri", texto: "Che, {nombre}." },
+    { siAfinidad: "mauri", min: 4, quien: "yo", texto: "Qué." },
+    { siAfinidad: "mauri", min: 4, quien: "mauri", texto: "Gracias por escucharme todo esto. Sé que hablo mucho." },
+    { siAfinidad: "mauri", min: 4, esperar: 500 },
+    { siAfinidad: "mauri", min: 4, quien: "yo", texto: "Hablás lo que hablás. Está bien." },
+    { siAfinidad: "mauri", min: 4, mauri: "orgulloso" },
+    { siAfinidad: "mauri", min: 4, quien: "mauri", texto: "BUENO PORQUE ME FALTA EL CAPÍTULO SIETE." },
+    { esperar: 600 },
+
+    { mauri: null, lucas: null },
+    { ir: "d3_recreo_volver" },
+  ],
+
+  /* ---------- 6d. Iara ---------- */
+  d3_con_iara: [
+    { recordar: "d3_vi_iara" },
+    { afinidad: { iara: 2 } },
+    { fondo: "cafeteria" },
+    { iara: "normal", donde: "derecha" },
+    { esperar: 500 },
+    { texto: "Estaba en la cafetería, en una mesa del costado, con su mejor amiga" },
+    { texto: "Hasta que de la nada lo que se podria decir como su mejor amida, se levanto y se fue a quien sabe donde"},
+    { texto: "Esta leyendo el mismo manga del que hablamos" },
+    { esperar: 600 },
+
+    { quien: "yo", texto: "¿Puedo sentarme ahi?" },
+    { texto: "Dije marcando el lugar donde estaba su mejor amiga"},
+    { iara: "pensando" },
+    { quien: "iara", texto: "Podes." },
+    { texto: "Y corrió el libro tres centímetros, que era todo el permiso que iba a dar." },
+    { esperar: 500 },
+
+    { quien: "iara", texto: "¿Sabés por qué tomo agua?" },
+    { quien: "yo", texto: "Sí." },
+    { esperar: 700 },
+    { iara: "orgullosa" },
+    { quien: "iara", texto: "Uh. Alguien que escucha." },
+    { quien: "iara", texto: "La mayoria finge escucharme y se olvida lo que les hablo." },
+    { quien: "iara", texto: "Es agotador." },
+    { esperar: 600 },
+
+    { texto: "Hablamos como veinte minutos de nada y de todo." },
+    { texto: "Del tomo trece, de una banda que escucha ella y que yo no conozco, de por qué la profesora de Derecho usa siempre el mismo ejemplo." },
+    { esperar: 500 },
+    { texto: "Iara habla poco pero cuando habla no dice relleno." },
+    { texto: "Es agotador y es lo mejor que me pasó en la semana." },
+    { esperar: 700 },
+
+    { siAfinidad: "iara", min: 3, iara: "pensando" },
+    { siAfinidad: "iara", min: 3, quien: "iara", texto: "Te voy a decir una cosa y no te la tomes mal." },
+    { siAfinidad: "iara", min: 3, quien: "yo", texto: "Ya me la estoy tomando mal." },
+    { siAfinidad: "iara", min: 3, quien: "iara", texto: "Sos mucho más fácil de leer de lo que creés." },
+    { siAfinidad: "iara", min: 3, esperar: 500 },
+    { siAfinidad: "iara", min: 3, quien: "iara", texto: "Y con Aiko sos ilegible para vos y transparente para todos los demás. Es un fenómeno." },
+    { siAfinidad: "iara", min: 3, esperar: 400 },
+    { siAfinidad: "iara", min: 3, quien: "yo", texto: "Dijiste que no me lo tomara mal." },
+    { siAfinidad: "iara", min: 3, iara: "orgullosa" },
+    { siAfinidad: "iara", min: 3, quien: "iara", texto: "Dije que no te lo tomaras mal. No dije que fuera agradable." },
+
+    { siAfinidad: "iara", max: 3, iara: "normal" },
+    { siAfinidad: "iara", max: 3, quien: "iara", texto: "Bueno. Andá que se te termina el recreo." },
+    { siAfinidad: "iara", max: 3, texto: "Y volvió al libro sin más trámite." },
+    { siAfinidad: "iara", max: 3, texto: "No fue un rechazo. Con ella hay que aprender a distinguir." },
+    { esperar: 700 },
+
+    { iara: null },
+    { ir: "d3_recreo_volver" },
+  ],
+
+  /* ---------- 6e. Aiko ---------- */
+  d3_con_aiko: [
+    { recordar: "d3_vi_aiko" },
+    { afinidad: { aiko: 1 } },
+    { fondo: "patio-colegio" },
+    { aiko: "normal-feliz", donde: "derecha" },
+    { esperar: 500 },
+    { texto: "Estaba sentada en el borde del cantero, sola, con las piernas cruzadas y la mochila usada de respaldo." },
+    { texto: "Como si estuviera esperando, aunque no había nada que indicara que estuviera esperando." },
+    { esperar: 600 },
+
+    { quien: "aiko", texto: "Uh, mirá." },
+    { quien: "aiko", texto: "El que se sienta en la sombra vino hasta acá caminando." },
+    { quien: "yo", texto: "Me lo recomendaron." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "¿Quién?" },
+    { quien: "yo", texto: "Un asesor." },
+    { esperar: 500 },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Franco." },
+    { quien: "yo", texto: "Un asesor anónimo." },
+    { quien: "aiko", texto: "Franco, obvio que fue Franco." },
+    { esperar: 700 },
+
+    { texto: "Me senté en el cantero, dejando el espacio de una persona en el medio, que es mi distancia por defecto." },
+    { esperar: 400 },
+    { aiko: "pensando-feliz" },
+    { texto: "Ella se corrió el espacio de media persona." },
+    { texto: "No dijo nada al hacerlo. Yo tampoco. Los dos sabíamos que había pasado." },
+    { esperar: 700 },
+
+    { texto: "Hablamos de la clase de Derecho." },
+    { texto: "De si uno devuelve la billetera por la ley o por la otra cosa, y de si eso importa cuando la billetera igual vuelve a su dueño." },
+    { esperar: 500 },
+    { quien: "aiko", texto: "Yo digo que importa." },
+    { quien: "yo", texto: "Yo digo que al dueño no." },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Al dueño no. A vos sí." },
+    { esperar: 900 },
+
+    { texto: "Y ahí me quedé callado un rato largo, porque era exactamente la respuesta que yo no había podido armar en dos horas de clase." },
+    { esperar: 600 },
+
+    { siAfinidad: "aiko", min: 8, aiko: "pensando-avergonzada" },
+    { siAfinidad: "aiko", min: 8, quien: "aiko", texto: "Che." },
+    { siAfinidad: "aiko", min: 8, quien: "yo", texto: "Qué." },
+    { siAfinidad: "aiko", min: 8, quien: "aiko", texto: "Nada." },
+    { siAfinidad: "aiko", min: 8, esperar: 500 },
+    { siAfinidad: "aiko", min: 8, texto: "Y se quedó con ese nada dando vueltas entre los dos, sin recogerlo." },
+    { siAfinidad: "aiko", min: 8, texto: "Un nada que pesaba bastante." },
+    { esperar: 700 },
+
+    { aiko: null },
+    { ir: "d3_recreo_volver" },
+  ],
+
+  /* ---------- 6f. Volver al patio, o cerrar el recreo ---------- */
+  d3_recreo_volver: [
+    /* La primera vez vuelve al menú. La segunda, se acabó el recreo. */
+    { sino: "d3_recreo_turno2", recordar: "d3_recreo_turno2", ir: "d3_recreo_hub" },
+
+    { fondo: "patio-colegio" },
+    { esperar: 600 },
+    { texto: "Timbre." },
+    { texto: "Cuarenta minutos que se fueron sin que yo mirara el reloj una sola vez, que es un dato en sí mismo." },
+    { esperar: 500 },
+
+    { texto: "Volví al aula caminando entre gente, no por el costado." },
+    { esperar: 400 },
+    { texto: "Detalle mínimo. Lo anoto igual, porque hace tres días habría ido por el costado." },
+    { ir: "d3_patio" },
+  ],
+
+  /* ---------- 5. El patio, sin excusa ---------- */
+  d3_patio: [
+    { fondo: "patio-colegio", musica: "escuela" },
+    { esperar: 600 },
+    { texto: "Salí al patio y fui derecho al rincón de la sombra, que es donde estuve todos los recreos de los últimos dos años." },
+    { esperar: 500 },
+    { texto: "Me apoyé contra la pared." },
+    { texto: "Desde acá se ve todo y no te ve nadie, que era el punto." },
+    { esperar: 700 },
+
+    { aiko: "normal-feliz", donde: "derecha" },
+    { texto: "Ella cruzó el patio en diagonal y se apoyó al lado mío, contra la misma pared, sin preguntar." },
+    { esperar: 500 },
+    { quien: "aiko", texto: "Así que este es el lugar." },
+    { quien: "yo", texto: "Este es el lugar." },
+    { quien: "aiko", texto: "Es horrible." },
+    { quien: "yo", texto: "Es estratégico." },
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Es horrible y estratégico." },
+    { esperar: 700 },
+
+    { texto: "Nos quedamos callados un rato mirando el patio, que a las once y veinte es un despelote de ciento cincuenta personas." },
+    { esperar: 500 },
+
+    /* Ella abre el tema, con distinto peso según cómo venís. */
+    { siAfinidad: "aiko", min: 7, aiko: "pensando-avergonzada" },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "Bueno." },
+    { siAfinidad: "aiko", min: 7, quien: "aiko", texto: "Ya entregamos." },
+    { siAfinidad: "aiko", min: 7, esperar: 900 },
+    { siAfinidad: "aiko", min: 7, texto: "Dos palabras y todo lo que había abajo de las dos palabras." },
+
+    { siAfinidad: "aiko", min: 3, max: 6, aiko: "pensando-feliz" },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "aiko", texto: "Ya está el trabajo." },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "yo", texto: "Ya está." },
+    { siAfinidad: "aiko", min: 3, max: 6, quien: "aiko", texto: "Mmm." },
+    { siAfinidad: "aiko", min: 3, max: 6, esperar: 700 },
+    { siAfinidad: "aiko", min: 3, max: 6, texto: "Ese mmm tenía una pregunta adentro que ninguno de los dos hizo." },
+
+    { siAfinidad: "aiko", max: 2, aiko: "normal-triste" },
+    { siAfinidad: "aiko", max: 2, quien: "aiko", texto: "Bueno. Ya entregamos." },
+    { siAfinidad: "aiko", max: 2, esperar: 500 },
+    { siAfinidad: "aiko", max: 2, texto: "Lo dijo como se dice una cosa que cierra, no una que abre." },
+    { siAfinidad: "aiko", max: 2, texto: "Y esperó, igual. Eso hay que reconocérselo: esperó igual." },
+    { esperar: 900 },
+
+    { texto: "Y ahí se hizo el silencio, y el silencio era mío." },
+    { esperar: 500 },
+    { texto: "Me tocaba a mí. Por primera vez en tres días, en un año y medio, en lo que me acuerdo." },
+    { esperar: 700 },
+
+    { texto: "Tenía las opciones ordenadas en la cabeza como siempre, con sus riesgos y sus costos." },
+    { texto: "Y por una vez ninguna decía \"no hagas nada\", que es la que suele ganar." },
+    { esperar: 900 },
+
+    {
+      opciones: [
+        { texto: "Decirle lo que no te salió",       ir: "d3_final_decir" },
+        { texto: "Inventar una excusa para verla",   ir: "d3_final_excusa" },
+        { texto: "Esperar a que hable ella",         ir: "d3_final_esperar" },
+      ]
+    },
+  ],
+
+  /* ---------- 6a. Lo decís ---------- */
+  d3_final_decir: [
+    { recordar: "d3_hablaste" },
+    { afinidad: { aiko: 3 } },
+    { aiko: "pensando-avergonzada", donde: "derecha" },
+    { esperar: 600 },
+
+    { quien: "yo", texto: "Aiko." },
+    { quien: "aiko", texto: "¿Mmm?" },
+    { esperar: 900 },
+
+    { texto: "Y esta vez no se me murió en el camino." },
+    { esperar: 500 },
+
+    { si: "d2_casi", quien: "yo", texto: "Lo de ayer en tu cuarto. Lo que no te dije." },
+    { si: "d2_casi", esperar: 400 },
+    { sino: "d2_casi", quien: "yo", texto: "Hace tres días que te quiero decir una cosa." },
+    { sino: "d2_casi", esperar: 400 },
+
+    { quien: "yo", texto: "No quiero que esto se termine porque se terminó el trabajo." },
+    { esperar: 900 },
+
+    { texto: "Lo dije mirándola, que es la parte que me costó, no la frase." },
+    { texto: "La frase la tenía hace setenta y dos horas. Lo que no tenía era la cara para decirla de frente." },
+    { esperar: 700 },
+
+    { aiko: "pensando-avergonzada" },
+    { texto: "Ella no contestó enseguida." },
+    { texto: "Se despegó de la pared, se puso adelante mío, y me miró un rato desde bastante más cerca de lo estrictamente necesario." },
+    { esperar: 900 },
+
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "¿Sabés cuánto tardaste?" },
+    { quien: "yo", texto: "Setenta y dos horas." },
+    { quien: "aiko", texto: "Un año y medio, boludo." },
+    { esperar: 700 },
+    { quien: "aiko", texto: "Yo te vengo mirando desde primero." },
+    { esperar: 900 },
+
+    { texto: "Y ahí, por primera vez en toda mi vida, me quedé sin ninguna cuenta que hacer." },
+    { texto: "Ni los minutos, ni los centímetros, ni las cosas que podían salir mal." },
+    { esperar: 500 },
+    { texto: "Nada. La cabeza en silencio." },
+    { esperar: 700 },
+    { texto: "No sabía que se podía." },
+    { ir: "fin_acto_2" },
+  ],
+
+  /* ---------- 6b. Inventás una excusa ---------- */
+  d3_final_excusa: [
+    { recordar: "d3_inventaste_excusa" },
+    { afinidad: { aiko: 2 } },
+    { aiko: "pensando-feliz", donde: "derecha" },
+    { esperar: 600 },
+
+    { quien: "yo", texto: "Che." },
+    { quien: "aiko", texto: "¿Mmm?" },
+    { esperar: 400 },
+    { quien: "yo", texto: "El de historia dijo que en dos semanas hay otro trabajo en parejas." },
+    { esperar: 900 },
+
+    { texto: "El de historia no dijo nada de eso." },
+    { texto: "El de historia habló cuarenta minutos sobre el modelo agroexportador y se fue." },
+    { esperar: 600 },
+
+    { aiko: "normal-feliz" },
+    { texto: "Ella se quedó un segundo con la boca cerrada, mirándome." },
+    { esperar: 400 },
+    { quien: "aiko", texto: "No dijo eso." },
+    { quien: "yo", texto: "Puede ser que no." },
+    { quien: "aiko", texto: "No dijo nada de eso, {nombre}." },
+    { quien: "yo", texto: "Bueno, capaz lo dice después." },
+    { esperar: 900 },
+
+    { aiko: "pensando-avergonzada" },
+    { texto: "Y se rió. Fuerte, no con la nariz." },
+    { texto: "Una risa de las que hacen que dos o tres personas del patio se den vuelta." },
+    { esperar: 600 },
+    { aiko: "normal-feliz" },
+    { quien: "aiko", texto: "Te dije que inventaras una excusa. No pensé que ibas a inventar UNA EXCUSA." },
+    { quien: "yo", texto: "Vos dijiste que inventara. No especificaste la calidad." },
+    { esperar: 700 },
+
+    { aiko: "pensando-feliz" },
+    { quien: "aiko", texto: "Bueno. Dale." },
+    { quien: "aiko", texto: "Vamos con la del trabajo de historia que no existe." },
+    { esperar: 500 },
+    { texto: "Y me hizo un gesto con la cabeza, hacia el patio, que significaba caminemos." },
+    { esperar: 700 },
+
+    { texto: "Caminamos hasta el timbre." },
+    { texto: "No dije lo que tenía que decir. Dije otra cosa, en el mismo lugar, con el mismo miedo, y funcionó igual." },
+    { esperar: 500 },
+    { texto: "No sé si eso es haber avanzado o haber hecho trampa." },
+    { texto: "Sospecho que a veces es lo mismo." },
+    { ir: "fin_acto_2" },
+  ],
+
+  /* ---------- 6c. Esperás ---------- */
+  d3_final_esperar: [
+    { recordar: "d3_esperaste_a_que_hable" },
+    { aiko: "normal-triste", donde: "derecha" },
+    { esperar: 900 },
+
+    { texto: "No dije nada." },
+    { texto: "Esperé, que es mi especialidad, y esperar tiene la ventaja de que uno nunca se equivoca." },
+    { esperar: 600 },
+    { texto: "Y también la desventaja de que uno nunca acierta, pero de eso me acordé después." },
+    { esperar: 700 },
+
+    { texto: "Contamos los dos el mismo silencio desde lados distintos." },
+    { texto: "Doce segundos. Después catorce. Después dejé de contar, que ya es raro en mí." },
+    { esperar: 900 },
+
+    { aiko: "pensando-feliz" },
+    { texto: "Ella se despegó de la pared." },
+    { quien: "aiko", texto: "Bueno." },
+    { esperar: 500 },
+    { quien: "aiko", texto: "Mañana también hay subte, {nombre}." },
+    { esperar: 900 },
+
+    { texto: "Y se fue caminando para el otro lado del patio, sin apuro, sin darse vuelta." },
+    { esperar: 600 },
+
+    { texto: "Mañana también hay subte." },
+    { texto: "Lo estuve masticando el resto del día, buscándole el tono, y llegué a la conclusión de que era las dos cosas al mismo tiempo." },
+    { esperar: 500 },
+    { texto: "Una puerta abierta y un aviso." },
+    { esperar: 700 },
+    { texto: "Ella me va a esperar. Pero no para siempre, porque nadie espera para siempre, y ella menos que nadie." },
+    { esperar: 500 },
+    { texto: "Mañana me paro en la línea amarilla a las seis menos nueve." },
+    { texto: "Y esta vez digo algo." },
+    { ir: "fin_acto_2" },
+  ],
+
+  /* ---------- CIERRE DEL ACTO 2 ---------- */
+  fin_acto_2: [
+    { esperar: 800 },
+    { aiko: null },
+    { fondo: "amanecer", musica: null },
+    { esperar: 700 },
+    { texto: "FIN DEL ACTO 2" },
+    { esperar: 600 },
+
+    /* Cómo cerraste con ella. */
+    { si: "d3_hablaste",             texto: "Se lo dijiste.\n\nTres días para setenta y dos horas de frase. Ella venía esperando un año y medio." },
+    { si: "d3_inventaste_excusa",    texto: "Inventaste una excusa y ella te la aceptó sabiendo que era mentira.\n\nEso también es una respuesta." },
+    { si: "d3_esperaste_a_que_hable", texto: "No dijiste nada.\n\nElla te dejó la puerta abierta, pero te avisó que tiene tiempo de cierre." },
+    { esperar: 500 },
+
+    /* De dónde venías. */
+    { si: "aceptaste_invitacion",  texto: "Fuiste a su casa. Conocés a Sora, la reja verde y el portarretratos boca abajo." },
+    { si: "rechazaste_invitacion", texto: "No fuiste a su casa. Todavía no sabés cómo es la reja verde." },
+    { si: "d3_esperaste",          texto: "Y la esperaste dieciocho minutos en el andén sin escribirle, porque escribirle no era esperarla." },
+    { esperar: 500 },
+
+    /* El resto del grupo. */
+    { siAfinidad: "alvaro", min: 3, texto: "El viernes vas a la cancha con Álvaro y los demás." },
+    { siAfinidad: "mauri",  min: 3, texto: "Mauri te va a buscar en el recreo largo para hablar del trece." },
+    { siAfinidad: "iara",   min: 3, texto: "Iara te tiene medido el ritmo de lectura y te va a cobrar el tomo catorce." },
+    { siAfinidad: "pato",   min: 3, texto: "Pato te manda fotos sin texto. En él, eso es una conversación." },
+    { siAfinidad: "alvaro", max: -1, texto: "Con Álvaro arrancaste torcido y no lo enderezaste." },
+    { siAfinidad: "iara",   max: -1, texto: "Iara se acuerda de la mentira. Iara se acuerda de todo." },
+    { esperar: 700 },
+
+    { texto: "El protagonista contaba once minutos hasta la estación.\n\nHoy dejó pasar dos trenes." },
+    { esperar: 600 },
+  ],
+
+
+
 
 };

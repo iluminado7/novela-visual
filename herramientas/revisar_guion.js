@@ -58,8 +58,15 @@ for (const [nombre, pasos] of Object.entries(HISTORIA)) {
     if ("donde" in p)
       ok(POSICIONES.includes(p.donde), `${donde}: posición "${p.donde}" inválida (usá ${POSICIONES.join(" / ")})`);
 
-    (p.opciones || []).forEach((o, j) =>
-      ok(escenas.includes(o.ir), `${donde}.opciones[${j}] ("${o.texto}"): ir -> "${o.ir}" no existe`));
+    (p.opciones || []).forEach((o, j) => {
+      const cual = `${donde}.opciones[${j}] ("${o.texto}")`;
+      ok(escenas.includes(o.ir), `${cual}: ir -> "${o.ir}" no existe`);
+      // Las opciones pueden llevar sus propias condiciones.
+      if ("siAfinidad" in o) {
+        ok(PERSONAJES[o.siAfinidad], `${cual}: siAfinidad de "${o.siAfinidad}", que no está en PERSONAJES`);
+        ok(o.min != null || o.max != null, `${cual}: siAfinidad sin "min" ni "max"`);
+      }
+    });
 
     // Sprites: cualquier clave que sea un personaje con carpeta propia.
     for (const clave of Object.keys(p)) {
@@ -113,6 +120,12 @@ for (const [nombre, pasos] of Object.entries(HISTORIA))
     if ("recordar" in p) puestas.add(p.recordar);
     for (const clave of ["si", "sino"])
       if (clave in p && !consultadas.has(p[clave])) consultadas.set(p[clave], `${nombre}[${i}]`);
+    // Las opciones también pueden consultar banderas.
+    (p.opciones || []).forEach((o) => {
+      for (const clave of ["si", "sino"])
+        if (clave in o && !consultadas.has(o[clave]))
+          consultadas.set(o[clave], `${nombre}[${i}].opciones`);
+    });
   });
 for (const [bandera, donde] of consultadas)
   ok(puestas.has(bandera),

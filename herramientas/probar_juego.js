@@ -142,7 +142,7 @@ const esperar = () => new Promise(r => _st(r, 30));
 async function jugar(nombreJugador, elegir) {
   montar();   // motor limpio para cada partida, como recargar la pagina
   console.log(`\n=== Partida como "${nombreJugador}" (elige ${JSON.stringify(elegir)}) ===`);
-  const vistas = [], sprites = new Set(), fondos = [];
+  const vistas = [], sprites = new Set(), fondos = [], menus = [];
   pistas = [];
   const musicaEnMenu = nodos.__musicaMenu;
   nodos.btnEmpezar.click();
@@ -173,6 +173,7 @@ async function jugar(nombreJugador, elegir) {
       const cual = Math.min(Array.isArray(elegir) ? (elegir[decisiones++] ?? 0) : elegir,
                             ops.length - 1);
       console.log(`  -> Opciones: ${etiquetas.join(" | ")}  => elijo "${etiquetas[cual]}"`);
+      menus.push({ opciones: etiquetas, elegida: etiquetas[cual] });
       ops[cual].click();
       await esperar();
       continue;
@@ -182,7 +183,7 @@ async function jugar(nombreJugador, elegir) {
   }
   if (guardias >= TOPE)
     throw new Error(`la historia no termino en ${TOPE} pasos: hay un bucle, o subi TOPE`);
-  return { vistas, sprites: [...sprites], fondos, pistas: [...pistas], musicaEnMenu };
+  return { vistas, sprites: [...sprites], fondos, pistas: [...pistas], musicaEnMenu, menus };
 }
 
 const SALTO = String.fromCharCode(10);
@@ -200,23 +201,23 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
   //   5 alfajor · 6 manga de Iara · 7 Mauri
   for (const [n, e] of [
         // el que se lleva bien con todos
-        ["Fede",      [0, 0, 1, 0, 0, 0, 0]],
+        ["Fede",      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]],
         // el que se lleva mal con todos: pasa de largo, rechaza, bardea y miente
-        ["Ana Lucia", [1, 1, 2, 2, 2, 1, 1]],
+        ["Ana Lucia", [1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 4, 3, 2]],
         // mezcla: le miente a Iara pero se acerca a Mauri
         ["Rocio",     [0, 1, 0, 1, 1, 1, 0]],
         // el mejor camino posible con Aiko: acepta, le escribe, lleva facturas,
         // le dice la verdad en el vagon y le respeta el espacio con el padre.
         // Es la unica combinacion que llega a la escena del cuarto.
-        ["Nico",      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]],
+        ["Nico",      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 3, 0]],
         // Afinidad media con Aiko y respetarle el espacio: tiene que saltear
         // la escena del cuarto sin colgarse.
         ["Vale",      [1, 0, 0, 0, 2, 1, 1, 1, 1, 2, 1]],
         // Rechaza la invitacion y despues le sigue TODOS los coqueteos
         // del recreo: es el mejor final posible de esa rama.
-        ["Juli",      [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]],
+        ["Juli",      [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]],
         // Rechaza y se hace el boludo en los tres: la rama fria.
-        ["Bruno",     [0, 1, 0, 0, 0, 0, 0, 1, 1, 1]],
+        ["Bruno",     [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2]],
         // mezcla al revés: banca a Álvaro, ignora a Pato y a Mauri
         ["Tomi",      [1, 0, 1, 2, 0, 0, 1]],
         ["",          [0, 0, 0, 0, 0, 0, 0]]]) {
@@ -255,6 +256,16 @@ const corto = r => r.replace(/^url\("|"\)$/g, "").replace("assets/", "");
     // Cierre: Aiko pide ir a la casa
     if (!texto.includes("¿Puedo ir a tu casa a terminarlo?"))
       errores.push("el acto no cierra con Aiko pidiendo ir a la casa");
+
+    // El hub del recreo: a quien ya visitaste no te lo puede volver a ofrecer.
+    const hub = r.menus.filter(m => m.opciones.some(o => o.startsWith("Ir con")));
+    for (let k = 1; k < hub.length; k++) {
+      const yaElegidos = hub.slice(0, k).map(m => m.elegida);
+      for (const repetida of hub[k].opciones.filter(o => yaElegidos.includes(o)))
+        errores.push(`el recreo volvio a ofrecer "${repetida}" despues de elegirla`);
+    }
+    if (hub.length && hub[hub.length - 1].opciones.length !== 5 - (hub.length - 1))
+      errores.push(`el menu del recreo tenia ${hub[hub.length-1].opciones.length} opciones en la vuelta ${hub.length}`);
 
     if (n === "Nico") {
       const af = (JSON.parse(almacen["novela-visual-save-auto"] || "{}").afinidad) || {};

@@ -387,11 +387,36 @@ function ejecutar(p){
   siguiente();   // era un paso solo visual: continuar
 }
 
+/* Una opción puede tener sus propias condiciones, igual que un paso:
+     { texto: "...", ir: "...", sino: "ya_hablaste_con_iara" }
+     { texto: "...", ir: "...", siAfinidad: "pato", min: 3 }
+   Si no se cumplen, el botón directamente no aparece. Sirve para menús que
+   se van vaciando, como el del recreo. */
+function opcionVisible(op){
+  if ("si"   in op && !estado.banderas[op.si])  return false;
+  if ("sino" in op &&  estado.banderas[op.sino]) return false;
+  if ("siAfinidad" in op){
+    const valor = afinidadDe(op.siAfinidad);
+    if (op.min != null && valor < op.min) return false;
+    if (op.max != null && valor > op.max) return false;
+  }
+  return true;
+}
+
 function mostrarOpciones(lista){
+  const visibles = (lista || []).filter(opcionVisible);
+
+  // Si no quedó ninguna, seguimos de largo en vez de dejar la pantalla trabada.
+  if (!visibles.length){
+    estado.enOpciones = false;
+    siguiente();
+    return;
+  }
+
   estado.enOpciones = true;
   el.dialogo.classList.add("oculto");
   el.opciones.innerHTML = "";
-  lista.forEach((op) => {
+  visibles.forEach((op) => {
     const b = document.createElement("button");
     b.className = "opcion";
     b.textContent = resolver(op.texto);
