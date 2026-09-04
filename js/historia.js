@@ -3115,7 +3115,7 @@ const HISTORIA = {
     { esperar: 900 },
 
     { texto: "Iba a decirle que no tenía nada en pausa." },
-    { texto: "Después me acordé de que a Mauri no le pregunté por el trece, de que a Pato nunca le contesté la última foto, de que a Álvaro le dije que sí a la cancha y no confirmé." },
+    { texto: "Después me acordé de que a Mauri no le pregunté por el trece, de que a Pato nunca le contesté la última foto, de que a Álvaro le dije que sí a lo de los peruanos y no confirmé." },
     { esperar: 600 },
     { texto: "Callado." },
     { esperar: 500 },
@@ -3175,7 +3175,25 @@ const HISTORIA = {
     { texto: "Se rieron seis personas. Yo entendí como la mitad porque me perdí el principio." },
     { esperar: 400 },
     { alvaro: "normal" },
-    { quien: "alvaro", texto: "Che, {nombre}, lo de la casa de Mauri el viernes." },
+    { quien: "alvaro", texto: "Che, {nombre}, vamos a lo de los peruanos el viernes." },
+    { esperar: 500 },
+
+    /* El apellido del lugar. Él lo ata solo y se lo guarda. */
+    { texto: "Lo de los peruanos." },
+    { texto: "Un carrito en la esquina de la avenida, tres mesas de plástico y sillas." },
+    { esperar: 400 },
+    { texto: "Paso por adelante todos los días desde hace dos años y nunca frené." },
+    { esperar: 600 },
+
+    { texto: "Y hace dos días, en un vagón vacío, Aiko me dijo que su viejo era peruano." },
+    { esperar: 900 },
+    { texto: "Capaz no significa nada. Buenos Aires está lleno de peruanos y de carritos." },
+    { texto: "Capaz sí." },
+    { esperar: 500 },
+    { recordar: "d3_ato_lo_de_los_peruanos" },
+    { texto: "No pregunté." },
+    { esperar: 700 },
+
     { quien: "yo", texto: "Sí." },
     { quien: "alvaro", texto: "¿Sí sí o sí de compromiso?" },
     { esperar: 900 },
@@ -3349,7 +3367,7 @@ const HISTORIA = {
     { siAfinidad: "iara", max: 3, iara: "normal" },
     { siAfinidad: "iara", max: 3, quien: "iara", texto: "Bueno. Andá que se te termina el recreo." },
     { siAfinidad: "iara", max: 3, texto: "Y volvió al libro sin más trámite." },
-    { siAfinidad: "iara", max: 3, texto: "No fue un rechazo. Con ella hay que aprender a distinguir." },
+    { siAfinidad: "iara", max: 3, texto: "No creo que este molesta conmigo. Con ella hay que aprender a distinguir." },
     { esperar: 700 },
 
     { iara: null },
@@ -3650,7 +3668,8 @@ const HISTORIA = {
     { esperar: 500 },
 
     /* El resto del grupo. */
-    { siAfinidad: "alvaro", min: 3, texto: "El viernes vas a la cancha con Álvaro y los demás." },
+    { siAfinidad: "alvaro", min: 3, texto: "El viernes comés en lo de los peruanos con Álvaro y los demás." },
+    { si: "d3_ato_lo_de_los_peruanos", texto: "Y no le preguntaste a Aiko si el carrito del toldo azul es de su familia.\n\nTodavía." },
     { siAfinidad: "mauri",  min: 3, texto: "Mauri te va a buscar en el recreo largo para hablar del trece." },
     { siAfinidad: "iara",   min: 3, texto: "Iara te tiene medido el ritmo de lectura y te va a cobrar el tomo catorce." },
     { siAfinidad: "pato",   min: 3, texto: "Pato te manda fotos sin texto. En él, eso es una conversación." },
